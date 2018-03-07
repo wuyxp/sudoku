@@ -9,9 +9,9 @@ module.exports = {
   resolve: {
     extensions: ['.js']
   },
-  externals: {
-    jquery: 'jQuery'
-  },
+  // externals: {
+  //   jquery: 'jQuery'
+  // },
   // plugins: [
   //   new webpack.ProvidePlugin({
   //     $: 'jquery'

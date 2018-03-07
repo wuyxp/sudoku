@@ -6,6 +6,7 @@
 @shadowTop: 0 -0.1rem 0.2rem rgba(48, 48, 48, .7);
 @borderColor: #888888;
 @popupBlockSize: 48px;
+@rootMatrixSize: 2.6rem;
 // Style rules
 html {
     font-size: @rootFontSize;
@@ -45,6 +46,47 @@ header{
 .container{
   background: #FFFFCC;
   flex:1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.matrix{
+  box-sizing: border-box;
+  border:1px solid @borderColor;
+  & > div {
+    box-sizing: border-box;
+    span{
+      box-sizing: border-box;
+      display: inline-block;
+      width: @rootMatrixSize;
+      text-align: center;
+      height: @rootMatrixSize;
+      line-height: @rootMatrixSize;
+      border-left: 1px solid @borderColor;
+      border-top:1px solid @borderColor;
+      &:last-child{
+        border-right: 1px solid @borderColor;
+      }
+      &.right-col{
+        border-right: 1px solid @borderColor;
+      }
+    }
+    &:last-child{
+      border-bottom: 1px solid @borderColor;
+    }
+    &.bottom-row{
+      &>span{
+        border-bottom: 1px solid @borderColor;
+      }
+      
+      &:last-child{
+        &>span{
+          border-bottom: 0px;
+        }
+      }
+    }
+  }
 }
 
 footer{

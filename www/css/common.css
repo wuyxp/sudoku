@@ -31,6 +31,41 @@ header {
 .container {
   background: #FFFFCC;
   flex: 1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+.matrix {
+  box-sizing: border-box;
+  border: 1px solid #888888;
+}
+.matrix > div {
+  box-sizing: border-box;
+}
+.matrix > div span {
+  box-sizing: border-box;
+  display: inline-block;
+  width: 2.6rem;
+  text-align: center;
+  height: 2.6rem;
+  line-height: 2.6rem;
+  border-left: 1px solid #888888;
+  border-top: 1px solid #888888;
+}
+.matrix > div span:last-child {
+  border-right: 1px solid #888888;
+}
+.matrix > div span.right-col {
+  border-right: 1px solid #888888;
+}
+.matrix > div:last-child {
+  border-bottom: 1px solid #888888;
+}
+.matrix > div.bottom-row > span {
+  border-bottom: 1px solid #888888;
+}
+.matrix > div.bottom-row:last-child > span {
+  border-bottom: 0px;
 }
 footer {
   height: 4rem;

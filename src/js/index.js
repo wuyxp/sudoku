@@ -1,23 +1,31 @@
 console.log('入口文件');
 
-// 返回行数组
-const makeRow = length => Array(length).fill(0).map((i, v) => v);
+import { makeMatrix, makeRow, shuffle } from './toolkit';
 
-// 返回矩阵数组
-const make = length => rowLength => Array(length).fill(0).map(i => makeRow(rowLength));
+import $ from 'jquery';
 
-const matrix = make(9)(9);
+const matrix = makeMatrix(9)(9);
+
 console.log(matrix);
 
-// 洗牌算法
-const shuffle = arr => {
-  for(let i = 0,l = arr.length ; i < l ; i++){
-    let randomNum = Math.floor(i+(Math.random()*(l-i)));
-    [arr[i], arr[randomNum]] = [arr[randomNum], arr[i]];
-  }
-  return arr;
+const renderMatrixDom = matrix => {
+  const matrixBox = $('<div>').addClass('matrix').attr('id','matrix');
+  const colClass = ['left-col','middle-col','right-col'];
+  const rowClass = ['top-row','middle-row','bottom-row'];
+  
+  matrix.forEach((row, rowIndex) => {
+    let rowBox = $('<div>');
+    rowBox.addClass(rowClass[rowIndex % 3]);
+    row.forEach((col, colIndex) => {
+      let colBox = $('<span>');
+      colBox.addClass(colClass[colIndex % 3]);
+      colBox.html(col);
+      rowBox.append(colBox);
+    });
+    matrixBox.append(rowBox);
+  })
+  
+  $('#container').append(matrixBox);
 }
 
-let arr = makeRow(9);
-console.log(arr);
-console.log(shuffle(arr));
+renderMatrixDom(matrix);
