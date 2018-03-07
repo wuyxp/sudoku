@@ -1,0 +1,50 @@
+html {
+  font-size: 14px;
+  height: 100%;
+}
+body {
+  padding: 0;
+  margin: 0;
+  background-color: #eeeeee;
+  font-family: "Menlo", "Monaco", "Consolas", "微软雅黑", "Heiti";
+  overflow: hidden;
+  user-select: none;
+  max-width: 450px;
+  height: 100%;
+}
+body > * {
+  max-width: 450px;
+}
+.main {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+header {
+  background: #0099CC;
+  height: 4rem;
+  line-height: 4rem;
+  font-size: 2rem;
+  text-indent: 1rem;
+}
+.container {
+  background: #FFFFCC;
+  flex: 1;
+}
+footer {
+  height: 4rem;
+  display: flex;
+  line-height: 4rem;
+  text-align: center;
+}
+footer > button {
+  flex: 1;
+  background: #99CC99;
+  font-size: 1.5rem;
+  color: #ffffff;
+  border-right: 1px solid #888888;
+}
+footer > button:hover {
+  background: #99CC00;
+}

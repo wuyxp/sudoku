@@ -1,0 +1,67 @@
+// Variables Definition
+@rootFontSize: 14px;
+@rootFontFamily: "Menlo", "Monaco", "Consolas", "微软雅黑", "Heiti";
+@shadow: 0.2rem 0.3rem 0.4rem rgba(48, 48, 48, .7);
+@shadowBottom: 0 0.2rem 0.3rem rgba(48, 48, 48, .7);
+@shadowTop: 0 -0.1rem 0.2rem rgba(48, 48, 48, .7);
+@borderColor: #888888;
+@popupBlockSize: 48px;
+// Style rules
+html {
+    font-size: @rootFontSize;
+    height: 100%;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: #eeeeee;
+    font-family: @rootFontFamily;
+    overflow: hidden;
+    user-select: none;
+    // 兼容非移动平台的 web
+    max-width: 450px;
+    height:100%;
+    >* {
+        max-width: 450px;
+    }
+}
+
+.main{
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%
+}
+
+header{
+  background: #0099CC;
+  height: 4rem;
+  line-height: 4rem;
+  font-size: 2rem;
+  text-indent: 1rem;
+}
+
+.container{
+  background: #FFFFCC;
+  flex:1;
+}
+
+footer{
+  height: 4rem;
+  display: flex;
+  line-height: 4rem;
+  text-align: center;
+  & > button {
+    flex:1;
+    background: #99CC99;
+    font-size: 1.5rem;
+    color:#ffffff;
+    border-right: 1px solid @borderColor;
+    &:hover{
+      background: #99CC00;
+    }
+  }
+
+}
+
