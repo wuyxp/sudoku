@@ -60,91 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _toolkit = __webpack_require__(1);
-
-var _jquery = __webpack_require__(2);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-console.log('入口文件');
-
-var matrix = (0, _toolkit.makeMatrix)(9)(9);
-
-console.log(matrix);
-
-var renderMatrixDom = function renderMatrixDom(matrix) {
-  var matrixBox = (0, _jquery2.default)('<div>').addClass('matrix').attr('id', 'matrix');
-  var colClass = ['left-col', 'middle-col', 'right-col'];
-  var rowClass = ['top-row', 'middle-row', 'bottom-row'];
-
-  matrix.forEach(function (row, rowIndex) {
-    var rowBox = (0, _jquery2.default)('<div>');
-    rowBox.addClass(rowClass[rowIndex % 3]);
-    row.forEach(function (col, colIndex) {
-      var colBox = (0, _jquery2.default)('<span>');
-      colBox.addClass(colClass[colIndex % 3]);
-      colBox.html(col);
-      rowBox.append(colBox);
-    });
-    matrixBox.append(rowBox);
-  });
-
-  (0, _jquery2.default)('#container').append(matrixBox);
-};
-
-renderMatrixDom(matrix);
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-// 返回行数组
-var makeRow = exports.makeRow = function makeRow(length) {
-  return Array(length).fill(0).map(function (i, v) {
-    return v;
-  });
-};
-
-// 返回矩阵数组
-var makeMatrix = exports.makeMatrix = function makeMatrix(length) {
-  return function (rowLength) {
-    return Array(length).fill(0).map(function (i) {
-      return makeRow(rowLength);
-    });
-  };
-};
-
-// 洗牌算法
-var shuffle = exports.shuffle = function shuffle(arr) {
-  for (var i = 0, l = arr.length; i < l; i++) {
-    var randomNum = Math.floor(i + Math.random() * (l - i));
-    var _ref = [arr[randomNum], arr[i]];
-    arr[i] = _ref[0];
-    arr[randomNum] = _ref[1];
-  }
-  return arr;
-};
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1834,10 +1754,204 @@ _$=window.$;jQuery.noConflict=function(deep){if(window.$===jQuery){window.$=_$;}
 // (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
 // and CommonJS for browser emulators (#13566)
 if(!noGlobal){window.jQuery=window.$=jQuery;}return jQuery;});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _toolkit = __webpack_require__(2);
+
+var _ui = __webpack_require__(3);
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+console.log('入口文件');
+
+var matrix = (0, _toolkit.generator)(function (state) {
+  if (state.done) {
+    (0, _jquery2.default)('#describe').html('\u521D\u59CB\u5316\u5B8C\u6210\uFF0C\u5171' + state.payload + '\u6B21');
+  } else {
+    (0, _jquery2.default)('#describe').html('\u6B63\u5728\u7B2C' + state.payload + '\u6B21\u521D\u59CB\u5316\u6570\u72EC');
+  }
+});
+
+console.log(matrix);
+
+(0, _ui.renderMatrixDom)(matrix, (0, _jquery2.default)('#container'));
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var MAX = 9;
+
+// 返回行数组
+var makeRow = exports.makeRow = function makeRow(length) {
+  return Array(length).fill(0);
+};
+
+// 返回矩阵数组
+var makeMatrix = exports.makeMatrix = function makeMatrix(length) {
+  return function (rowLength) {
+    return Array(length).fill(0).map(function (i) {
+      return makeRow(rowLength);
+    });
+  };
+};
+
+// 洗牌算法
+var shuffle = exports.shuffle = function shuffle(arr) {
+  for (var i = 0, l = arr.length; i < l; i++) {
+    var randomNum = Math.floor(i + Math.random() * (l - i));
+    var _ref = [arr[randomNum], arr[i]];
+    arr[i] = _ref[0];
+    arr[randomNum] = _ref[1];
+  }
+  return arr;
+};
+
+// 检查所填写中数据是否合法
+var check = function check(matrix, n, rowIndex, colIndex) {
+  // 所在行的数据
+  var rowArr = matrix[rowIndex];
+  // 所在列的数据
+  var colArr = makeRow(9).map(function (v, i) {
+    return matrix[i][colIndex];
+  });
+
+  // 所在宫的数据
+  var gonRowIndex = parseInt(rowIndex / 3) * 3;
+  var gonColIndex = parseInt(colIndex / 3) * 3;
+
+  var gonArr = makeRow(9).map(function (v, i) {
+    // TODO 计算出宫的数据
+    return matrix[gonRowIndex + parseInt(i / 3)][gonColIndex + i % 3];
+  });
+
+  // console.log(n, rowArr, colArr, gonArr);
+
+  // 判断此处数字还没有被覆盖过
+  if (matrix[rowIndex][colIndex] !== 0) {
+    return false;
+  }
+  // 判断此处数字列、行、宫上没有此数字
+  if (rowArr.indexOf(n) !== -1 || colArr.indexOf(n) !== -1 || gonArr.indexOf(n) !== -1) {
+    return false;
+  }
+  // 判断此处数字宫中没有此数字
+  return true;
+};
+
+// 生成随机9宫格
+var generator = exports.generator = function generator() {
+  var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+
+
+  var fillRow = function fillRow(n, rowIndex, matrix) {
+    if (rowIndex >= MAX) {
+      return true;
+    }
+    var randomArr = shuffle(makeRow(MAX).map(function (i, v) {
+      return v;
+    }));
+    for (var i = 0; i < MAX; i++) {
+      var randomIndex = randomArr.pop();
+      var result = n + 1;
+      if (!check(matrix, result, rowIndex, randomIndex)) {
+        continue;
+      }
+      matrix[rowIndex][randomIndex] = result;
+      if (!fillRow(n, rowIndex + 1, matrix)) {
+        matrix[rowIndex][randomIndex] = 0;
+      }
+      return true;
+    }
+    return false;
+  };
+
+  var loading = 0;
+  var _generator = function _generator() {
+    loading++;
+    // console.log(`正在努力第${loading}次生成中。。`);
+    callback({
+      done: false,
+      payload: loading
+    });
+    var matrix = makeMatrix(MAX)(MAX);
+    matrix.forEach(function (row, rowIndex) {
+      fillRow(rowIndex, 0, matrix);
+    });
+    return matrix;
+  };
+  var matrix = _generator();
+  while (/0/g.test(matrix.toString())) {
+    matrix = _generator();
+  }
+  // console.log(`生成完成，生成了${loading}次!`); 
+  callback({
+    done: true,
+    payload: loading
+  });
+  return matrix;
+};
+
+// let matrix = generator();
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.renderMatrixDom = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// 将生成的矩阵展示在页面上
+var renderMatrixDom = exports.renderMatrixDom = function renderMatrixDom(matrix, $container) {
+  var matrixBox = (0, _jquery2.default)('<div>').addClass('matrix').attr('id', 'matrix');
+  var colClass = ['left-col', 'middle-col', 'right-col'];
+  var rowClass = ['top-row', 'middle-row', 'bottom-row'];
+
+  matrix.forEach(function (row, rowIndex) {
+    var rowBox = (0, _jquery2.default)('<div>');
+    rowBox.addClass(rowClass[rowIndex % 3]);
+    row.forEach(function (col, colIndex) {
+      var colBox = (0, _jquery2.default)('<span>');
+      colBox.addClass(colClass[colIndex % 3]);
+      colBox.html(col);
+      rowBox.append(colBox);
+    });
+    matrixBox.append(rowBox);
+  });
+
+  $container.append(matrixBox);
+};
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

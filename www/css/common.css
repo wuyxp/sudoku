@@ -34,6 +34,7 @@ header {
   justify-content: center;
   align-items: center;
   display: flex;
+  flex-direction: column;
 }
 .matrix {
   box-sizing: border-box;
