@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -75,7 +75,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var MAX = exports.MAX = 9;
 var BASE = exports.BASE = Math.sqrt(MAX);
-var DEFAULT_LEVEL = exports.DEFAULT_LEVEL = 3; // enum [1, 2, 3, 4];
+var DEFAULT_LEVEL = exports.DEFAULT_LEVEL = 1; // enum [1, 2, 3, 4];
 
 /***/ }),
 /* 1 */
@@ -1768,122 +1768,10 @@ _$=window.$;jQuery.noConflict=function(deep){if(window.$===jQuery){window.$=_$;}
 // (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
 // and CommonJS for browser emulators (#13566)
 if(!noGlobal){window.jQuery=window.$=jQuery;}return jQuery;});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _generator = __webpack_require__(3);
-
-var _ui = __webpack_require__(5);
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-console.log('入口文件');
-
-
-var matrix = (0, _generator.generator)(function (state) {
-  if (state.done) {
-    (0, _jquery2.default)('#describe').html('\u521D\u59CB\u5316\u5B8C\u6210\uFF0C\u5171' + state.payload + '\u6B21');
-  } else {
-    (0, _jquery2.default)('#describe').html('\u6B63\u5728\u7B2C' + state.payload + '\u6B21\u521D\u59CB\u5316\u6570\u72EC');
-  }
-});
-
-var palyMatrix = (0, _generator.spotMatrix)(matrix);
-var render = new _ui.Render(palyMatrix, matrix);
-render.renderMatrixDom((0, _jquery2.default)('#container'));
-render.renderPupopDom((0, _jquery2.default)('#dashboard'));
-render.bind();
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.spotMatrix = exports.generator = undefined;
-
-var _config = __webpack_require__(0);
-
-var _toolkit = __webpack_require__(4);
-
-// 生成随机全局的矩阵盘
-var generator = exports.generator = function generator() {
-  var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-
-  // 根据传入的值，和行数，还有矩阵，每次填完当前行，则继续递归下一行，否则，向上退一行，接着走for循环
-  var fillRow = function fillRow(n, rowIndex, matrix) {
-    if (rowIndex >= _config.MAX) {
-      return true;
-    }
-    var randomArr = (0, _toolkit.shuffle)((0, _toolkit.makeRow)(_config.MAX).map(function (i, v) {
-      return v;
-    }));
-    for (var i = 0; i < _config.MAX; i++) {
-      var randomIndex = randomArr.pop();
-      var result = n + 1;
-      if (!(0, _toolkit.check)(matrix, result, rowIndex, randomIndex)) {
-        continue;
-      }
-      matrix[rowIndex][randomIndex] = result;
-      if (!fillRow(n, rowIndex + 1, matrix)) {
-        matrix[rowIndex][randomIndex] = 0;
-      }
-      return true;
-    }
-    return false;
-  };
-
-  var loading = 0;
-  var _generator = function _generator() {
-    loading++;
-    // console.log(`正在努力第${loading}次生成中。。`);
-    callback({
-      done: false,
-      payload: loading
-    });
-    var matrix = (0, _toolkit.makeMatrix)(_config.MAX)(_config.MAX);
-    matrix.forEach(function (row, rowIndex) {
-      fillRow(rowIndex, 0, matrix);
-    });
-    return matrix;
-  };
-  var matrix = _generator();
-  while (/0/g.test(matrix.toString())) {
-    matrix = _generator();
-  }
-  callback({
-    done: true,
-    payload: loading
-  });
-  return matrix;
-};
-
-// 根据完成后的矩阵，生成用于玩家玩的部分矩阵
-var spotMatrix = exports.spotMatrix = function spotMatrix(matrix) {
-  var level = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _config.DEFAULT_LEVEL;
-  return matrix.map(function (row) {
-    return row.map(function (col) {
-      return Math.random() * _config.MAX > level ? col : 0;
-    });
-  });
-};
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2012,155 +1900,42 @@ var checkMatrix = exports.checkMatrix = function checkMatrix(matrix) {
 };
 
 /***/ }),
-/* 5 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Render = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _config = __webpack_require__(0);
+var _ui = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+console.log('入口文件');
 
-// 将生成的矩阵展示在页面上
 
-var Render = exports.Render = function () {
-  function Render(spotmatrix, matrix) {
-    _classCallCheck(this, Render);
-
-    this.spotmatrix = spotmatrix;
-    this.matrix = matrix;
-    this.matrixDom;
-    this.pupopDom;
-    this.targetDom;
+var initCallback = function initCallback(state) {
+  if (state.done) {
+    (0, _jquery2.default)('#describe').html('\u521D\u59CB\u5316\u5B8C\u6210\uFF0C\u5171' + state.payload + '\u6B21');
+  } else {
+    (0, _jquery2.default)('#describe').html('\u6B63\u5728\u7B2C' + state.payload + '\u6B21\u521D\u59CB\u5316\u6570\u72EC');
   }
-
-  _createClass(Render, [{
-    key: 'renderMatrixDom',
-    value: function renderMatrixDom($container) {
-      var _this = this;
-
-      this.matrixDom = (0, _jquery2.default)('<div>').addClass('matrix').attr('id', 'matrix');
-      var colClass = ['left-col', 'middle-col', 'right-col'];
-      var rowClass = ['top-row', 'middle-row', 'bottom-row'];
-
-      this.spotmatrix.forEach(function (row, rowIndex) {
-        var rowBox = (0, _jquery2.default)('<div>');
-        rowBox.addClass(rowClass[rowIndex % _config.BASE]);
-        row.forEach(function (col, colIndex) {
-          var colBox = (0, _jquery2.default)('<span>').addClass(colClass[colIndex % _config.BASE]).addClass(col === 0 ? 'empty hide-font' : 'default').data({ row: rowIndex, col: colIndex }).html(col);
-          rowBox.append(colBox);
-        });
-        _this.matrixDom.append(rowBox);
-      });
-
-      $container.append(this.matrixDom);
-    }
-  }, {
-    key: 'renderPupopDom',
-    value: function renderPupopDom($dashboard) {
-      var html = '<div>\n        <span>1</span><span>2</span><span>3</span>\n      </div>\n      <div>\n        <span>4</span><span>5</span><span>6</span>\n      </div>\n      <div>\n        <span>7</span><span>8</span><span>9</span>\n      </div>\n      <div>\n        <span class="hide-font make1" className="make1">m</span><span>C</span><span class="hide-font make2" className="make2">m</span>\n      </div>';
-      this.pupopDom = $dashboard;
-      $dashboard.append((0, _jquery2.default)(html));
-    }
-  }, {
-    key: 'showPupop',
-    value: function showPupop(colDom) {
-      var _colDom$offset = colDom.offset(),
-          top = _colDom$offset.top,
-          left = _colDom$offset.left;
-
-      top = top - colDom.height() - 2;
-      left = left - colDom.width() - 2;
-      this.pupopDom.css({
-        top: top, left: left
-      }).show();
-    }
-  }, {
-    key: 'hidePupop',
-    value: function hidePupop() {
-      this.pupopDom.hide();
-    }
-  }, {
-    key: 'setColValue',
-    value: function setColValue(value) {
-      var _targetDom = this.targetDom,
-          colDom = _targetDom.colDom,
-          row = _targetDom.row,
-          col = _targetDom.col;
-
-      colDom.html(value);
-      if (value === 0) {
-        colDom.addClass('hide-font');
-        this.setColClass('');
-      } else {
-        colDom.removeClass('hide-font');
-      }
-      this.spotmatrix[row][col] = parseInt(value);
-    }
-  }, {
-    key: 'setColClass',
-    value: function setColClass(className) {
-      var colDom = this.targetDom.colDom;
-
-      if (className) {
-        if (colDom.hasClass('make1') || colDom.hasClass('make2')) {
-          colDom.removeClass(['make1', 'make2']).addClass(className);
-        } else {
-          colDom.addClass(className);
-        }
-      } else {
-        colDom.removeClass(['make1', 'make2']);
-      }
-    }
-  }, {
-    key: 'bind',
-    value: function bind() {
-      var _this2 = this;
-
-      this.matrixDom.on('click', '.empty', function (e) {
-        var colDom = (0, _jquery2.default)(e.target);
-
-        var _colDom$data = colDom.data(),
-            row = _colDom$data.row,
-            col = _colDom$data.col;
-
-        _this2.targetDom = {
-          colDom: colDom, row: row, col: col
-        };
-        _this2.showPupop(colDom);
-      });
-      this.pupopDom.on('click', 'span', function (e) {
-        var colDom = (0, _jquery2.default)(e.target);
-        var text = colDom.text();
-        if (text !== 'm') {
-          _this2.setColValue(/\d/.test(text) ? text : 0);
-        } else {
-          _this2.setColClass(colDom.attr('className'));
-        }
-        _this2.hidePupop();
-      });
-    }
-  }]);
-
-  return Render;
-}();
+};
+var render = new _ui.Render({
+  initCallback: initCallback,
+  container: (0, _jquery2.default)('#container'),
+  dashboard: (0, _jquery2.default)('#dashboard')
+});
+render.initCheck((0, _jquery2.default)('#check'));
+render.initReset((0, _jquery2.default)('#reset'));
+render.initClear((0, _jquery2.default)('#clear'));
+render.initRebuild((0, _jquery2.default)('#rebuild'));
 
 /***/ }),
-/* 6 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2187,6 +1962,369 @@ module.exports = function (module) {
 		module.webpackPolyfill = 1;
 	}
 	return module;
+};
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Render = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _config = __webpack_require__(0);
+
+var _generator = __webpack_require__(6);
+
+var _toolkit = __webpack_require__(2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// 将生成的矩阵展示在页面上
+
+var Render = exports.Render = function () {
+  function Render() {
+    var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, Render);
+
+    var initCallback = config.initCallback,
+        container = config.container,
+        dashboard = config.dashboard;
+
+    this.matrixDom;
+    this.pupopDom;
+    this.targetDom;
+    this.init(initCallback, container, dashboard);
+    this.cacheDom = [];
+  }
+  // 初始化
+
+
+  _createClass(Render, [{
+    key: 'init',
+    value: function init(initCallback, container, dashboard) {
+      this.matrix = (0, _generator.generator)(initCallback);
+      this.spotMatrix = (0, _generator.spotMatrix)(this.matrix);
+      this._spotMatrix = JSON.parse(JSON.stringify(this.spotMatrix));
+      this.renderMatrixDom(container);
+      this.renderPupopDom(dashboard);
+      this.initCallback = initCallback;
+      this.container = container;
+      this.dashboard = dashboard;
+      this.initBind();
+    }
+
+    // 渲染矩阵
+
+  }, {
+    key: 'renderMatrixDom',
+    value: function renderMatrixDom($container) {
+      var _this = this;
+
+      this.cacheDom = [];
+      this.matrixDom = (0, _jquery2.default)('<div>').addClass('matrix').attr('id', 'matrix');
+      var colClass = ['left-col', 'middle-col', 'right-col'];
+      var rowClass = ['top-row', 'middle-row', 'bottom-row'];
+
+      this.spotMatrix.forEach(function (row, rowIndex) {
+        var rowBox = (0, _jquery2.default)('<div>');
+        rowBox.addClass(rowClass[rowIndex % _config.BASE]);
+        row.forEach(function (col, colIndex) {
+          var colBox = (0, _jquery2.default)('<span>').addClass(colClass[colIndex % _config.BASE]).addClass(col === 0 ? 'empty hide-font' : 'default').data({ row: rowIndex, col: colIndex }).html(col);
+          rowBox.append(colBox);
+        });
+        _this.matrixDom.append(rowBox);
+      });
+
+      $container.append(this.matrixDom);
+    }
+
+    // 渲染弹出层
+
+  }, {
+    key: 'renderPupopDom',
+    value: function renderPupopDom($dashboard) {
+      var html = '<div>\n        <span>1</span><span>2</span><span>3</span>\n      </div>\n      <div>\n        <span>4</span><span>5</span><span>6</span>\n      </div>\n      <div>\n        <span>7</span><span>8</span><span>9</span>\n      </div>\n      <div>\n        <span class="hide-font make1" className="make1">m</span><span>C</span><span class="hide-font make2" className="make2">m</span>\n      </div>';
+      this.pupopDom = $dashboard;
+      $dashboard.append((0, _jquery2.default)(html));
+    }
+
+    // 展示弹出层
+
+  }, {
+    key: 'showPupop',
+    value: function showPupop(colDom) {
+      var _colDom$offset = colDom.offset(),
+          top = _colDom$offset.top,
+          left = _colDom$offset.left;
+
+      top = top - colDom.height() - 2;
+      left = left - colDom.width() - 2;
+      this.pupopDom.css({
+        top: top, left: left
+      }).show();
+    }
+
+    // 绑定检查
+
+  }, {
+    key: 'initCheck',
+    value: function initCheck(checkDom) {
+      var _this2 = this;
+
+      this.checkDom = checkDom;
+      this.checkDom.on('click', function () {
+        var mark = (0, _toolkit.checkMatrix)(_this2.spotMatrix);
+        _this2.cacheDom = [];
+        mark.forEach(function (row, rowIndex) {
+          return row.forEach(function (col, colIndex) {
+            if (!mark[rowIndex][colIndex]) {
+              var colDom = _this2.matrixDom.find('div').eq(rowIndex).find('span').eq(colIndex);
+              if (colDom.hasClass('empty') && colDom.html() != 0) {
+                colDom.addClass('error-mark');
+                _this2.cacheDom.push(colDom);
+              }
+            }
+          });
+        });
+      });
+    }
+
+    // 绑定重置
+
+  }, {
+    key: 'initReset',
+    value: function initReset(resetDom) {
+      var _this3 = this;
+
+      this.resetDom = resetDom;
+      this.resetDom.on('click', function () {
+        _this3.spotMatrix = JSON.parse(JSON.stringify(_this3._spotMatrix));
+        _this3.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
+        _this3.renderMatrixDom(_this3.container);
+        _this3.initBindMatrixDom();
+      });
+    }
+
+    // 绑定清除
+
+  }, {
+    key: 'initClear',
+    value: function initClear(clearDom) {
+      var _this4 = this;
+
+      this.clearDom = clearDom;
+      this.clearDom.on('click', function () {
+        _this4.cacheDom.forEach(function (col) {
+          col.html(0).removeClass('error-mark').addClass('hide-font');
+        });
+      });
+    }
+
+    // 绑定重建
+
+  }, {
+    key: 'initRebuild',
+    value: function initRebuild(reBuild) {
+      var _this5 = this;
+
+      this.reBuild = reBuild;
+      this.reBuild.on('click', function () {
+        _this5.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
+        _this5.dashboard.html('');
+        _this5.init(_this5.callback, _this5.container, _this5.dashboard);
+      });
+    }
+
+    // 隐藏弹出层
+
+  }, {
+    key: 'hidePupop',
+    value: function hidePupop() {
+      this.pupopDom.hide();
+    }
+
+    // 设置值
+
+  }, {
+    key: 'setColValue',
+    value: function setColValue(value) {
+      var _targetDom = this.targetDom,
+          colDom = _targetDom.colDom,
+          row = _targetDom.row,
+          col = _targetDom.col;
+
+      colDom.html(value);
+      if (value === 0) {
+        colDom.addClass('hide-font');
+        this.setColClass('');
+      } else {
+        colDom.removeClass('hide-font');
+      }
+      this.spotMatrix[row][col] = parseInt(value);
+    }
+
+    // 设置mark颜色
+
+  }, {
+    key: 'setColClass',
+    value: function setColClass(className) {
+      var colDom = this.targetDom.colDom;
+
+      if (className) {
+        if (colDom.hasClass('make1') || colDom.hasClass('make2')) {
+          colDom.removeClass(['make1', 'make2']).addClass(className);
+        } else {
+          colDom.addClass(className);
+        }
+      } else {
+        colDom.removeClass(['make1', 'make2']);
+      }
+    }
+
+    // 绑定点击矩阵事件
+
+  }, {
+    key: 'initBindMatrixDom',
+    value: function initBindMatrixDom() {
+      var _this6 = this;
+
+      this.matrixDom.on('click', '.empty', function (e) {
+        var colDom = (0, _jquery2.default)(e.target);
+
+        var _colDom$data = colDom.data(),
+            row = _colDom$data.row,
+            col = _colDom$data.col;
+
+        _this6.targetDom = {
+          colDom: colDom, row: row, col: col
+        };
+        _this6.showPupop(colDom);
+      });
+    }
+
+    // 绑定点击弹出层事件
+
+  }, {
+    key: 'initBindPupopDom',
+    value: function initBindPupopDom() {
+      var _this7 = this;
+
+      this.pupopDom.on('click', 'span', function (e) {
+        var colDom = (0, _jquery2.default)(e.target);
+        var text = colDom.text();
+        _this7.targetDom.colDom.removeClass('error-mark');
+        if (text !== 'm') {
+          _this7.setColValue(/\d/.test(text) ? text : 0);
+        } else {
+          _this7.setColClass(colDom.attr('className'));
+        }
+        _this7.hidePupop();
+      });
+    }
+
+    // 初始化绑定事件
+
+  }, {
+    key: 'initBind',
+    value: function initBind() {
+      this.initBindMatrixDom();
+      this.initBindPupopDom();
+    }
+  }]);
+
+  return Render;
+}();
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.spotMatrix = exports.generator = undefined;
+
+var _config = __webpack_require__(0);
+
+var _toolkit = __webpack_require__(2);
+
+// 生成随机全局的矩阵盘
+var generator = exports.generator = function generator() {
+  var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+
+  // 根据传入的值，和行数，还有矩阵，每次填完当前行，则继续递归下一行，否则，向上退一行，接着走for循环
+  var fillRow = function fillRow(n, rowIndex, matrix) {
+    if (rowIndex >= _config.MAX) {
+      return true;
+    }
+    var randomArr = (0, _toolkit.shuffle)((0, _toolkit.makeRow)(_config.MAX).map(function (i, v) {
+      return v;
+    }));
+    for (var i = 0; i < _config.MAX; i++) {
+      var randomIndex = randomArr.pop();
+      var result = n + 1;
+      if (!(0, _toolkit.check)(matrix, result, rowIndex, randomIndex)) {
+        continue;
+      }
+      matrix[rowIndex][randomIndex] = result;
+      if (!fillRow(n, rowIndex + 1, matrix)) {
+        matrix[rowIndex][randomIndex] = 0;
+      }
+      return true;
+    }
+    return false;
+  };
+
+  var loading = 0;
+  var _generator = function _generator() {
+    loading++;
+    // console.log(`正在努力第${loading}次生成中。。`);
+    callback({
+      done: false,
+      payload: loading
+    });
+    var matrix = (0, _toolkit.makeMatrix)(_config.MAX)(_config.MAX);
+    matrix.forEach(function (row, rowIndex) {
+      fillRow(rowIndex, 0, matrix);
+    });
+    return matrix;
+  };
+  var matrix = _generator();
+  while (/0/g.test(matrix.toString())) {
+    matrix = _generator();
+  }
+  callback({
+    done: true,
+    payload: loading
+  });
+  return matrix;
+};
+
+// 根据完成后的矩阵，生成用于玩家玩的部分矩阵
+var spotMatrix = exports.spotMatrix = function spotMatrix(matrix) {
+  var level = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _config.DEFAULT_LEVEL;
+  return matrix.map(function (row) {
+    return row.map(function (col) {
+      return Math.random() * _config.MAX > level ? col : 0;
+    });
+  });
 };
 
 /***/ })

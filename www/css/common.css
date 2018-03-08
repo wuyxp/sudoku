@@ -10,6 +10,9 @@
 .make2 {
   background: #66CCFF !important;
 }
+.error-mark {
+  background: #FF3300 !important;
+}
 html {
   font-size: 14px;
   height: 100%;

@@ -1,21 +1,41 @@
 import $ from 'jquery';
 import {MAX, BASE} from './config';
+
+import { generator, spotMatrix } from './generator';
+import { checkMatrix } from './toolkit';
+
 // 将生成的矩阵展示在页面上
 
 export class Render {
-  constructor(spotmatrix, matrix){
-    this.spotmatrix = spotmatrix;
-    this.matrix = matrix;
+  constructor(config = {}){
+    const {initCallback, container, dashboard} = config;
     this.matrixDom;
     this.pupopDom;
     this.targetDom;
+    this.init(initCallback, container, dashboard);
+    this.cacheDom = [];
   }
+  // 初始化
+  init(initCallback, container, dashboard){
+    this.matrix = generator(initCallback);
+    this.spotMatrix = spotMatrix(this.matrix);
+    this._spotMatrix = JSON.parse(JSON.stringify(this.spotMatrix));
+    this.renderMatrixDom(container);
+    this.renderPupopDom(dashboard);
+    this.initCallback = initCallback;
+    this.container = container;
+    this.dashboard = dashboard;
+    this.initBind();
+  }
+
+  // 渲染矩阵
   renderMatrixDom($container){
+    this.cacheDom = [];
     this.matrixDom = $('<div>').addClass('matrix').attr('id','matrix');
     const colClass = ['left-col','middle-col','right-col'];
     const rowClass = ['top-row','middle-row','bottom-row'];
     
-    this.spotmatrix.forEach((row, rowIndex) => {
+    this.spotMatrix.forEach((row, rowIndex) => {
       let rowBox = $('<div>');
       rowBox.addClass(rowClass[rowIndex % BASE]);
       row.forEach((col, colIndex) => {
@@ -30,7 +50,9 @@ export class Render {
     })
     
     $container.append(this.matrixDom);
-  } 
+  }
+
+  // 渲染弹出层
   renderPupopDom($dashboard){
     const html = `<div>
         <span>1</span><span>2</span><span>3</span>
@@ -47,6 +69,8 @@ export class Render {
     this.pupopDom = $dashboard;
     $dashboard.append($(html));
   }
+
+  // 展示弹出层
   showPupop(colDom){
     let {top, left} = colDom.offset();
     top = top - colDom.height() - 2;
@@ -55,9 +79,62 @@ export class Render {
       top,left
     }).show();
   }
+
+  // 绑定检查
+  initCheck(checkDom){
+    this.checkDom = checkDom;
+    this.checkDom.on('click', () => {
+      const mark = checkMatrix(this.spotMatrix);
+      this.cacheDom = [];
+      mark.forEach((row, rowIndex) => row.forEach((col, colIndex) => {
+        if(!mark[rowIndex][colIndex]){
+          let colDom = this.matrixDom.find('div').eq(rowIndex).find('span').eq(colIndex);
+          if(colDom.hasClass('empty') && colDom.html() != 0){
+            colDom.addClass('error-mark');
+            this.cacheDom.push(colDom);
+          }
+        }
+      }));
+    })
+  }
+
+  // 绑定重置
+  initReset(resetDom){
+    this.resetDom = resetDom;
+    this.resetDom.on('click', () => {
+      this.spotMatrix = JSON.parse(JSON.stringify(this._spotMatrix));
+      this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
+      this.renderMatrixDom(this.container);
+      this.initBindMatrixDom();
+    }) 
+  }
+
+  // 绑定清除
+  initClear(clearDom){
+    this.clearDom = clearDom;
+    this.clearDom.on('click', () => {
+      this.cacheDom.forEach(col => {
+        col.html(0).removeClass('error-mark').addClass('hide-font');
+      })
+    }) 
+  }
+
+  // 绑定重建
+  initRebuild(reBuild){
+    this.reBuild = reBuild;
+    this.reBuild.on('click',() => {
+      this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
+      this.dashboard.html('');
+      this.init(this.callback, this.container, this.dashboard);
+    })
+  }
+
+  // 隐藏弹出层
   hidePupop(){
     this.pupopDom.hide();
   }
+
+  // 设置值
   setColValue(value){
     const {colDom, row, col} = this.targetDom;
     colDom.html(value);
@@ -67,8 +144,10 @@ export class Render {
     }else{
       colDom.removeClass('hide-font');
     }
-    this.spotmatrix[row][col] = parseInt(value);
+    this.spotMatrix[row][col] = parseInt(value);
   }
+
+  // 设置mark颜色
   setColClass(className){
     const {colDom} = this.targetDom;
     if(className){
@@ -81,7 +160,9 @@ export class Render {
       colDom.removeClass(['make1', 'make2']) 
     }
   }
-  bind(){
+
+  // 绑定点击矩阵事件
+  initBindMatrixDom(){
     this.matrixDom.on('click', '.empty', e => {
       const colDom = $(e.target);
       const {row, col} = colDom.data();
@@ -90,9 +171,14 @@ export class Render {
       }
       this.showPupop(colDom);
     });
+  }
+
+  // 绑定点击弹出层事件
+  initBindPupopDom(){
     this.pupopDom.on('click', 'span', e => {
       const colDom = $(e.target);
       const text = colDom.text();
+      this.targetDom.colDom.removeClass('error-mark');
       if(text !== 'm'){
         this.setColValue(/\d/.test(text) ? text : 0)
       }else{
@@ -100,5 +186,11 @@ export class Render {
       }
       this.hidePupop();
     })
+  }
+
+  // 初始化绑定事件
+  initBind(){
+    this.initBindMatrixDom();
+    this.initBindPupopDom();
   }
 }
