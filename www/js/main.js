@@ -1934,6 +1934,11 @@ render.initReset((0, _jquery2.default)('#reset'));
 render.initClear((0, _jquery2.default)('#clear'));
 render.initRebuild((0, _jquery2.default)('#rebuild'));
 
+(0, _jquery2.default)('#jump').on('click', function () {
+  var level = (0, _jquery2.default)('#jumpList').val();
+  render.setLevel(level);
+});
+
 /***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -2010,6 +2015,7 @@ var Render = exports.Render = function () {
     this.emptyNum = 0; // 初始化差的空白数据
     this.init(initCallback, container, dashboard);
     this.cacheDom = []; // 检索到错误dom的缓存
+    this.level = _config.DEFAULT_LEVEL;
   }
   // 初始化
 
@@ -2018,7 +2024,7 @@ var Render = exports.Render = function () {
     key: 'init',
     value: function init(initCallback, container, dashboard) {
       this.matrix = (0, _generator.generator)(initCallback);
-      this.spotMatrix = (0, _generator.spotMatrix)(this.matrix);
+      this.spotMatrix = (0, _generator.spotMatrix)(this.matrix, this.level);
       this._spotMatrix = JSON.parse(JSON.stringify(this.spotMatrix));
       this.emptyNum = this.setEmptyNum();
       this.renderMatrixDom(container);
@@ -2062,6 +2068,15 @@ var Render = exports.Render = function () {
       var html = '<div>\n        <span>1</span><span>2</span><span>3</span>\n      </div>\n      <div>\n        <span>4</span><span>5</span><span>6</span>\n      </div>\n      <div>\n        <span>7</span><span>8</span><span>9</span>\n      </div>\n      <div>\n        <span class="hide-font make1" className="make1">m</span><span>C</span><span class="hide-font make2" className="make2">m</span>\n      </div>';
       this.pupopDom = $dashboard;
       $dashboard.append((0, _jquery2.default)(html));
+    }
+
+    //设置关卡
+
+  }, {
+    key: 'setLevel',
+    value: function setLevel(level) {
+      this.level = level;
+      this.reBuildMatrix();
     }
 
     // 展示弹出层
@@ -2157,6 +2172,13 @@ var Render = exports.Render = function () {
         });
       });
     }
+  }, {
+    key: 'reBuildMatrix',
+    value: function reBuildMatrix() {
+      this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
+      this.dashboard.html('');
+      this.init(this.callback, this.container, this.dashboard);
+    }
 
     // 绑定重建
 
@@ -2167,9 +2189,7 @@ var Render = exports.Render = function () {
 
       this.reBuild = reBuild;
       this.reBuild.on('click', function () {
-        _this6.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
-        _this6.dashboard.html('');
-        _this6.init(_this6.callback, _this6.container, _this6.dashboard);
+        _this6.reBuildMatrix();
       });
     }
 
@@ -2187,10 +2207,9 @@ var Render = exports.Render = function () {
     key: 'checkOver',
     value: function checkOver() {
       this.emptyNum = this.setEmptyNum();
-      console.log(this.emptyNum);
       if (this.emptyNum === 0) {
         if (this.checkMatrixDom()) {
-          alert('潇洒哥最棒');
+          alert('潇洒哥最棒，再来一把吧！');
         }
       }
     }

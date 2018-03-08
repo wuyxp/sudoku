@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import {MAX, BASE} from './config';
+import {MAX, BASE, DEFAULT_LEVEL} from './config';
 
 import { generator, spotMatrix } from './generator';
 import { checkMatrix } from './toolkit';
@@ -15,11 +15,12 @@ export class Render {
     this.emptyNum = 0; // 初始化差的空白数据
     this.init(initCallback, container, dashboard);
     this.cacheDom = []; // 检索到错误dom的缓存
+    this.level = DEFAULT_LEVEL;
   }
   // 初始化
   init(initCallback, container, dashboard){
     this.matrix = generator(initCallback);
-    this.spotMatrix = spotMatrix(this.matrix);
+    this.spotMatrix = spotMatrix(this.matrix, this.level);
     this._spotMatrix = JSON.parse(JSON.stringify(this.spotMatrix));
     this.emptyNum = this.setEmptyNum();
     this.renderMatrixDom(container);
@@ -70,6 +71,12 @@ export class Render {
       </div>`;
     this.pupopDom = $dashboard;
     $dashboard.append($(html));
+  }
+
+  //设置关卡
+  setLevel(level){
+    this.level = level;
+    this.reBuildMatrix();
   }
 
   // 展示弹出层
@@ -130,14 +137,17 @@ export class Render {
       })
     }) 
   }
+  reBuildMatrix(){
+    this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
+    this.dashboard.html('');
+    this.init(this.callback, this.container, this.dashboard);
+  }
 
   // 绑定重建
   initRebuild(reBuild){
     this.reBuild = reBuild;
     this.reBuild.on('click',() => {
-      this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
-      this.dashboard.html('');
-      this.init(this.callback, this.container, this.dashboard);
+      this.reBuildMatrix();
     })
   }
 

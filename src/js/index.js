@@ -18,3 +18,8 @@ render.initCheck($('#check'));
 render.initReset($('#reset'));
 render.initClear($('#clear'));
 render.initRebuild($('#rebuild'));
+
+$('#jump').on('click',() => {
+  const level = $('#jumpList').val();
+  render.setLevel(level);
+})
