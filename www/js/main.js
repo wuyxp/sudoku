@@ -1777,8 +1777,6 @@ if(!noGlobal){window.jQuery=window.$=jQuery;}return jQuery;});
 "use strict";
 
 
-__webpack_require__(0);
-
 var _generator = __webpack_require__(3);
 
 var _ui = __webpack_require__(5);
@@ -1801,8 +1799,10 @@ var matrix = (0, _generator.generator)(function (state) {
 });
 
 var palyMatrix = (0, _generator.spotMatrix)(matrix);
-
-(0, _ui.renderMatrixDom)(palyMatrix, (0, _jquery2.default)('#container'));
+var render = new _ui.Render(palyMatrix, matrix);
+render.renderMatrixDom((0, _jquery2.default)('#container'));
+render.renderPupopDom((0, _jquery2.default)('#dashboard'));
+render.bind();
 
 /***/ }),
 /* 3 */
@@ -2021,7 +2021,9 @@ var checkMatrix = exports.checkMatrix = function checkMatrix(matrix) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.renderPupopDom = exports.renderMatrixDom = undefined;
+exports.Render = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _jquery = __webpack_require__(1);
 
@@ -2031,29 +2033,131 @@ var _config = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 // 将生成的矩阵展示在页面上
-var renderMatrixDom = exports.renderMatrixDom = function renderMatrixDom(matrix, $container) {
-  var matrixBox = (0, _jquery2.default)('<div>').addClass('matrix').attr('id', 'matrix');
-  var colClass = ['left-col', 'middle-col', 'right-col'];
-  var rowClass = ['top-row', 'middle-row', 'bottom-row'];
 
-  matrix.forEach(function (row, rowIndex) {
-    var rowBox = (0, _jquery2.default)('<div>');
-    rowBox.addClass(rowClass[rowIndex % _config.BASE]);
-    row.forEach(function (col, colIndex) {
-      var colBox = (0, _jquery2.default)('<span>');
-      colBox.addClass(colClass[colIndex % _config.BASE]);
-      colBox.html(col);
-      colBox.addClass(col === 0 ? 'empty hide-font' : 'default');
-      rowBox.append(colBox);
-    });
-    matrixBox.append(rowBox);
-  });
+var Render = exports.Render = function () {
+  function Render(spotmatrix, matrix) {
+    _classCallCheck(this, Render);
 
-  $container.append(matrixBox);
-};
+    this.spotmatrix = spotmatrix;
+    this.matrix = matrix;
+    this.matrixDom;
+    this.pupopDom;
+    this.targetDom;
+  }
 
-var renderPupopDom = exports.renderPupopDom = function renderPupopDom() {};
+  _createClass(Render, [{
+    key: 'renderMatrixDom',
+    value: function renderMatrixDom($container) {
+      var _this = this;
+
+      this.matrixDom = (0, _jquery2.default)('<div>').addClass('matrix').attr('id', 'matrix');
+      var colClass = ['left-col', 'middle-col', 'right-col'];
+      var rowClass = ['top-row', 'middle-row', 'bottom-row'];
+
+      this.spotmatrix.forEach(function (row, rowIndex) {
+        var rowBox = (0, _jquery2.default)('<div>');
+        rowBox.addClass(rowClass[rowIndex % _config.BASE]);
+        row.forEach(function (col, colIndex) {
+          var colBox = (0, _jquery2.default)('<span>').addClass(colClass[colIndex % _config.BASE]).addClass(col === 0 ? 'empty hide-font' : 'default').data({ row: rowIndex, col: colIndex }).html(col);
+          rowBox.append(colBox);
+        });
+        _this.matrixDom.append(rowBox);
+      });
+
+      $container.append(this.matrixDom);
+    }
+  }, {
+    key: 'renderPupopDom',
+    value: function renderPupopDom($dashboard) {
+      var html = '<div>\n        <span>1</span><span>2</span><span>3</span>\n      </div>\n      <div>\n        <span>4</span><span>5</span><span>6</span>\n      </div>\n      <div>\n        <span>7</span><span>8</span><span>9</span>\n      </div>\n      <div>\n        <span class="hide-font make1" className="make1">m</span><span>C</span><span class="hide-font make2" className="make2">m</span>\n      </div>';
+      this.pupopDom = $dashboard;
+      $dashboard.append((0, _jquery2.default)(html));
+    }
+  }, {
+    key: 'showPupop',
+    value: function showPupop(colDom) {
+      var _colDom$offset = colDom.offset(),
+          top = _colDom$offset.top,
+          left = _colDom$offset.left;
+
+      top = top - colDom.height() - 2;
+      left = left - colDom.width() - 2;
+      this.pupopDom.css({
+        top: top, left: left
+      }).show();
+    }
+  }, {
+    key: 'hidePupop',
+    value: function hidePupop() {
+      this.pupopDom.hide();
+    }
+  }, {
+    key: 'setColValue',
+    value: function setColValue(value) {
+      var _targetDom = this.targetDom,
+          colDom = _targetDom.colDom,
+          row = _targetDom.row,
+          col = _targetDom.col;
+
+      colDom.html(value);
+      if (value === 0) {
+        colDom.addClass('hide-font');
+        this.setColClass('');
+      } else {
+        colDom.removeClass('hide-font');
+      }
+      this.spotmatrix[row][col] = parseInt(value);
+    }
+  }, {
+    key: 'setColClass',
+    value: function setColClass(className) {
+      var colDom = this.targetDom.colDom;
+
+      if (className) {
+        if (colDom.hasClass('make1') || colDom.hasClass('make2')) {
+          colDom.removeClass(['make1', 'make2']).addClass(className);
+        } else {
+          colDom.addClass(className);
+        }
+      } else {
+        colDom.removeClass(['make1', 'make2']);
+      }
+    }
+  }, {
+    key: 'bind',
+    value: function bind() {
+      var _this2 = this;
+
+      this.matrixDom.on('click', '.empty', function (e) {
+        var colDom = (0, _jquery2.default)(e.target);
+
+        var _colDom$data = colDom.data(),
+            row = _colDom$data.row,
+            col = _colDom$data.col;
+
+        _this2.targetDom = {
+          colDom: colDom, row: row, col: col
+        };
+        _this2.showPupop(colDom);
+      });
+      this.pupopDom.on('click', 'span', function (e) {
+        var colDom = (0, _jquery2.default)(e.target);
+        var text = colDom.text();
+        if (text !== 'm') {
+          _this2.setColValue(/\d/.test(text) ? text : 0);
+        } else {
+          _this2.setColClass(colDom.attr('className'));
+        }
+        _this2.hidePupop();
+      });
+    }
+  }]);
+
+  return Render;
+}();
 
 /***/ }),
 /* 6 */

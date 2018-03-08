@@ -5,10 +5,10 @@
   text-indent: 999rem;
 }
 .make1 {
-  background: #CCCCFF;
+  background: #CCCCFF !important;
 }
 .make2 {
-  background: #66CCFF;
+  background: #66CCFF !important;
 }
 html {
   font-size: 14px;
@@ -58,6 +58,7 @@ header {
   left: 100px;
   color: #000033;
   font-size: 1.4rem;
+  border-width: 1px;
 }
 .pupop > div {
   box-sizing: border-box;
@@ -65,10 +66,10 @@ header {
 .pupop > div span {
   box-sizing: border-box;
   display: inline-block;
-  width: 2.6rem;
+  width: 2.2rem;
   text-align: center;
-  height: 2.6rem;
-  line-height: 2.6rem;
+  height: 2.2rem;
+  line-height: 2.2rem;
   border-left: 1px solid #888888;
   border-top: 1px solid #888888;
 }
@@ -103,10 +104,10 @@ header {
 .matrix > div span {
   box-sizing: border-box;
   display: inline-block;
-  width: 2.6rem;
+  width: 2.2rem;
   text-align: center;
-  height: 2.6rem;
-  line-height: 2.6rem;
+  height: 2.2rem;
+  line-height: 2.2rem;
   border-left: 1px solid #888888;
   border-top: 1px solid #888888;
 }
