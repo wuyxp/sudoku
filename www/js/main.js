@@ -60,11 +60,24 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var MAX = exports.MAX = 9;
+var BASE = exports.BASE = Math.sqrt(MAX);
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1754,20 +1767,20 @@ _$=window.$;jQuery.noConflict=function(deep){if(window.$===jQuery){window.$=_$;}
 // (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
 // and CommonJS for browser emulators (#13566)
 if(!noGlobal){window.jQuery=window.$=jQuery;}return jQuery;});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _toolkit = __webpack_require__(2);
+var _generator = __webpack_require__(3);
 
-var _ui = __webpack_require__(3);
+var _ui = __webpack_require__(5);
 
-var _jquery = __webpack_require__(0);
+var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -1775,7 +1788,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 console.log('入口文件');
 
-var matrix = (0, _toolkit.generator)(function (state) {
+var matrix = (0, _generator.generator)(function (state) {
   if (state.done) {
     (0, _jquery2.default)('#describe').html('\u521D\u59CB\u5316\u5B8C\u6210\uFF0C\u5171' + state.payload + '\u6B21');
   } else {
@@ -1788,7 +1801,7 @@ console.log(matrix);
 (0, _ui.renderMatrixDom)(matrix, (0, _jquery2.default)('#container'));
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1797,7 +1810,78 @@ console.log(matrix);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var MAX = 9;
+exports.generator = undefined;
+
+var _config = __webpack_require__(0);
+
+var _toolkit = __webpack_require__(4);
+
+// 生成随机9宫格
+var generator = exports.generator = function generator() {
+  var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+
+
+  var fillRow = function fillRow(n, rowIndex, matrix) {
+    if (rowIndex >= _config.MAX) {
+      return true;
+    }
+    var randomArr = (0, _toolkit.shuffle)((0, _toolkit.makeRow)(_config.MAX).map(function (i, v) {
+      return v;
+    }));
+    for (var i = 0; i < _config.MAX; i++) {
+      var randomIndex = randomArr.pop();
+      var result = n + 1;
+      if (!(0, _toolkit.check)(matrix, result, rowIndex, randomIndex)) {
+        continue;
+      }
+      matrix[rowIndex][randomIndex] = result;
+      if (!fillRow(n, rowIndex + 1, matrix)) {
+        matrix[rowIndex][randomIndex] = 0;
+      }
+      return true;
+    }
+    return false;
+  };
+
+  var loading = 0;
+  var _generator = function _generator() {
+    loading++;
+    // console.log(`正在努力第${loading}次生成中。。`);
+    callback({
+      done: false,
+      payload: loading
+    });
+    var matrix = (0, _toolkit.makeMatrix)(_config.MAX)(_config.MAX);
+    matrix.forEach(function (row, rowIndex) {
+      fillRow(rowIndex, 0, matrix);
+    });
+    return matrix;
+  };
+  var matrix = _generator();
+  while (/0/g.test(matrix.toString())) {
+    matrix = _generator();
+  }
+  // console.log(`生成完成，生成了${loading}次!`); 
+  callback({
+    done: true,
+    payload: loading
+  });
+  return matrix;
+};
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.check = exports.getGons = exports.getCols = exports.getRows = exports.getGon = exports.getCol = exports.getRow = exports.shuffle = exports.makeMatrix = exports.makeRow = undefined;
+
+var _config = __webpack_require__(0);
 
 // 返回行数组
 var makeRow = exports.makeRow = function makeRow(length) {
@@ -1824,25 +1908,62 @@ var shuffle = exports.shuffle = function shuffle(arr) {
   return arr;
 };
 
-// 检查所填写中数据是否合法
-var check = function check(matrix, n, rowIndex, colIndex) {
-  // 所在行的数据
-  var rowArr = matrix[rowIndex];
-  // 所在列的数据
-  var colArr = makeRow(9).map(function (v, i) {
+// 获取对应的行
+var getRow = exports.getRow = function getRow(matrix, rowIndex) {
+  return matrix[rowIndex];
+};
+
+// 获取对应的列
+var getCol = exports.getCol = function getCol(matrix, rowIndex, colIndex) {
+  return makeRow(_config.MAX).map(function (v, i) {
     return matrix[i][colIndex];
   });
+};
+
+// 获取对应的宫
+var getGon = exports.getGon = function getGon(matrix, rowIndex, colIndex) {
+  var gonRowIndex = parseInt(rowIndex / _config.BASE) * _config.BASE;
+  var gonColIndex = parseInt(colIndex / _config.BASE) * _config.BASE;
+  return makeRow(_config.MAX).map(function (v, i) {
+    return matrix[gonRowIndex + parseInt(i / _config.BASE)][gonColIndex + i % _config.BASE];
+  });
+};
+
+// 获取全部的行
+var getRows = exports.getRows = function getRows(matrix) {
+  return matrix;
+};
+
+// 获取全部的列
+var getCols = exports.getCols = function getCols(matrix) {
+  return makeRow(_config.MAX).map(function (row, rowIndex) {
+    return getCol(matrix, 0, rowIndex);
+  });
+};
+
+// 获取全部的宫
+var getGons = exports.getGons = function getGons(matrix) {
+  return makeRow(_config.MAX).map(function (row, rowIndex) {
+    return getGon(matrix, parseInt(rowIndex / _config.BASE) * _config.BASE, parseInt(rowIndex % _config.BASE) * _config.BASE);
+  });
+};
+
+var textMatrix = makeMatrix(_config.MAX)(_config.MAX).map(function (row) {
+  return row.map(function (col, colindex) {
+    return colindex;
+  });
+});
+;
+
+// 检查所填写中数据是否合法
+var check = exports.check = function check(matrix, n, rowIndex, colIndex) {
+  // 所在行的数据
+  var rowArr = getRow(matrix, rowIndex);;
+  // 所在列的数据
+  var colArr = getCol(matrix, rowIndex, colIndex);
 
   // 所在宫的数据
-  var gonRowIndex = parseInt(rowIndex / 3) * 3;
-  var gonColIndex = parseInt(colIndex / 3) * 3;
-
-  var gonArr = makeRow(9).map(function (v, i) {
-    // TODO 计算出宫的数据
-    return matrix[gonRowIndex + parseInt(i / 3)][gonColIndex + i % 3];
-  });
-
-  // console.log(n, rowArr, colArr, gonArr);
+  var gonArr = getGon(matrix, rowIndex, colIndex);
 
   // 判断此处数字还没有被覆盖过
   if (matrix[rowIndex][colIndex] !== 0) {
@@ -1856,63 +1977,8 @@ var check = function check(matrix, n, rowIndex, colIndex) {
   return true;
 };
 
-// 生成随机9宫格
-var generator = exports.generator = function generator() {
-  var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-
-
-  var fillRow = function fillRow(n, rowIndex, matrix) {
-    if (rowIndex >= MAX) {
-      return true;
-    }
-    var randomArr = shuffle(makeRow(MAX).map(function (i, v) {
-      return v;
-    }));
-    for (var i = 0; i < MAX; i++) {
-      var randomIndex = randomArr.pop();
-      var result = n + 1;
-      if (!check(matrix, result, rowIndex, randomIndex)) {
-        continue;
-      }
-      matrix[rowIndex][randomIndex] = result;
-      if (!fillRow(n, rowIndex + 1, matrix)) {
-        matrix[rowIndex][randomIndex] = 0;
-      }
-      return true;
-    }
-    return false;
-  };
-
-  var loading = 0;
-  var _generator = function _generator() {
-    loading++;
-    // console.log(`正在努力第${loading}次生成中。。`);
-    callback({
-      done: false,
-      payload: loading
-    });
-    var matrix = makeMatrix(MAX)(MAX);
-    matrix.forEach(function (row, rowIndex) {
-      fillRow(rowIndex, 0, matrix);
-    });
-    return matrix;
-  };
-  var matrix = _generator();
-  while (/0/g.test(matrix.toString())) {
-    matrix = _generator();
-  }
-  // console.log(`生成完成，生成了${loading}次!`); 
-  callback({
-    done: true,
-    payload: loading
-  });
-  return matrix;
-};
-
-// let matrix = generator();
-
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1923,9 +1989,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.renderMatrixDom = undefined;
 
-var _jquery = __webpack_require__(0);
+var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
+
+var _config = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1937,10 +2005,10 @@ var renderMatrixDom = exports.renderMatrixDom = function renderMatrixDom(matrix,
 
   matrix.forEach(function (row, rowIndex) {
     var rowBox = (0, _jquery2.default)('<div>');
-    rowBox.addClass(rowClass[rowIndex % 3]);
+    rowBox.addClass(rowClass[rowIndex % _config.BASE]);
     row.forEach(function (col, colIndex) {
       var colBox = (0, _jquery2.default)('<span>');
-      colBox.addClass(colClass[colIndex % 3]);
+      colBox.addClass(colClass[colIndex % _config.BASE]);
       colBox.html(col);
       rowBox.append(colBox);
     });
@@ -1951,7 +2019,7 @@ var renderMatrixDom = exports.renderMatrixDom = function renderMatrixDom(matrix,
 };
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -1,6 +1,6 @@
 console.log('入口文件');
 
-import { makeMatrix, makeRow, shuffle, generator } from './toolkit';
+import { generator } from './generator';
 import { renderMatrixDom } from './ui';
 
 import $ from 'jquery';

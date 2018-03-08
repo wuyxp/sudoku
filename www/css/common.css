@@ -11,6 +11,7 @@ body {
   user-select: none;
   max-width: 450px;
   height: 100%;
+  margin: 0px auto;
 }
 body > * {
   max-width: 450px;

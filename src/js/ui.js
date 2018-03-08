@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import {MAX, BASE} from './config';
 // 将生成的矩阵展示在页面上
 export const renderMatrixDom = (matrix, $container) => {
   const matrixBox = $('<div>').addClass('matrix').attr('id','matrix');
@@ -7,10 +8,10 @@ export const renderMatrixDom = (matrix, $container) => {
   
   matrix.forEach((row, rowIndex) => {
     let rowBox = $('<div>');
-    rowBox.addClass(rowClass[rowIndex % 3]);
+    rowBox.addClass(rowClass[rowIndex % BASE]);
     row.forEach((col, colIndex) => {
       let colBox = $('<span>');
-      colBox.addClass(colClass[colIndex % 3]);
+      colBox.addClass(colClass[colIndex % BASE]);
       colBox.html(col);
       rowBox.append(colBox);
     });
