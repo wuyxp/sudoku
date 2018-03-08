@@ -1,3 +1,15 @@
+.hide {
+  display: none;
+}
+.hide-font {
+  text-indent: 999rem;
+}
+.make1 {
+  background: #CCCCFF;
+}
+.make2 {
+  background: #66CCFF;
+}
 html {
   font-size: 14px;
   height: 100%;
@@ -37,6 +49,50 @@ header {
   display: flex;
   flex-direction: column;
 }
+.pupop {
+  box-sizing: border-box;
+  border: 1px solid #888888;
+  position: absolute;
+  background: #FFCC99;
+  top: 100px;
+  left: 100px;
+  color: #000033;
+  font-size: 1.4rem;
+}
+.pupop > div {
+  box-sizing: border-box;
+}
+.pupop > div span {
+  box-sizing: border-box;
+  display: inline-block;
+  width: 2.6rem;
+  text-align: center;
+  height: 2.6rem;
+  line-height: 2.6rem;
+  border-left: 1px solid #888888;
+  border-top: 1px solid #888888;
+}
+.pupop > div span:last-child {
+  border-right: 1px solid #888888;
+}
+.pupop > div span.right-col {
+  border-right: 1px solid #888888;
+}
+.pupop > div span.default {
+  background: #FFFF99;
+}
+.pupop > div span.empty {
+  background: #FFFFFF;
+}
+.pupop > div:last-child {
+  border-bottom: 1px solid #888888;
+}
+.pupop > div.bottom-row > span {
+  border-bottom: 1px solid #888888;
+}
+.pupop > div.bottom-row:last-child > span {
+  border-bottom: 0px;
+}
 .matrix {
   box-sizing: border-box;
   border: 1px solid #888888;
@@ -65,7 +121,6 @@ header {
 }
 .matrix > div span.empty {
   background: #FFFFFF;
-  text-indent: 9999rem;
 }
 .matrix > div:last-child {
   border-bottom: 1px solid #888888;

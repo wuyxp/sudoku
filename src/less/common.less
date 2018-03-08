@@ -7,6 +7,22 @@
 @borderColor: #888888;
 @popupBlockSize: 48px;
 @rootMatrixSize: 2.6rem;
+
+// 工具
+
+.hide {
+  display: none;
+}
+.hide-font {
+  text-indent: 999rem;
+}
+.make1 {
+  background: #CCCCFF;
+}
+.make2 {
+  background: #66CCFF
+}
+
 // Style rules
 html {
     font-size: @rootFontSize;
@@ -54,6 +70,16 @@ header{
   .describe{}
 }
 
+.pupop {
+  .matrix();
+  position: absolute;
+  background: #FFCC99;
+  top: 100px;
+  left: 100px;
+  color: #000033;
+  font-size: 1.4rem;
+}
+
 .matrix{
   box-sizing: border-box;
   border:1px solid @borderColor;
@@ -79,7 +105,6 @@ header{
       }
       &.empty{
         background: #FFFFFF;
-        text-indent: 9999rem;
       }
     }
     &:last-child{

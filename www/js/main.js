@@ -2021,7 +2021,7 @@ var checkMatrix = exports.checkMatrix = function checkMatrix(matrix) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.renderMatrixDom = undefined;
+exports.renderPupopDom = exports.renderMatrixDom = undefined;
 
 var _jquery = __webpack_require__(1);
 
@@ -2044,7 +2044,7 @@ var renderMatrixDom = exports.renderMatrixDom = function renderMatrixDom(matrix,
       var colBox = (0, _jquery2.default)('<span>');
       colBox.addClass(colClass[colIndex % _config.BASE]);
       colBox.html(col);
-      colBox.addClass(col === 0 ? 'empty' : 'default');
+      colBox.addClass(col === 0 ? 'empty hide-font' : 'default');
       rowBox.append(colBox);
     });
     matrixBox.append(rowBox);
@@ -2052,6 +2052,8 @@ var renderMatrixDom = exports.renderMatrixDom = function renderMatrixDom(matrix,
 
   $container.append(matrixBox);
 };
+
+var renderPupopDom = exports.renderPupopDom = function renderPupopDom() {};
 
 /***/ }),
 /* 6 */

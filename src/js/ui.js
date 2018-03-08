@@ -13,11 +13,15 @@ export const renderMatrixDom = (matrix, $container) => {
       let colBox = $('<span>');
       colBox.addClass(colClass[colIndex % BASE]);
       colBox.html(col);
-      colBox.addClass(col === 0 ? 'empty' : 'default');
+      colBox.addClass(col === 0 ? 'empty hide-font' : 'default');
       rowBox.append(colBox);
     });
     matrixBox.append(rowBox);
   })
   
   $container.append(matrixBox);
+}
+
+export const renderPupopDom = () => {
+
 }
