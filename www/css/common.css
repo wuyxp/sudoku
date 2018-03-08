@@ -60,6 +60,13 @@ header {
 .matrix > div span.right-col {
   border-right: 1px solid #888888;
 }
+.matrix > div span.default {
+  background: #FFFF99;
+}
+.matrix > div span.empty {
+  background: #FFFFFF;
+  text-indent: 9999rem;
+}
 .matrix > div:last-child {
   border-bottom: 1px solid #888888;
 }

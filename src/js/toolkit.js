@@ -39,11 +39,11 @@ export const getGons = matrix => makeRow(MAX).map((row, rowIndex) => getGon(matr
 // 检查所填写中数据是否合法
 export const check = (matrix, n, rowIndex, colIndex) => {
   // 所在行的数据
-  let rowArr = getRow(matrix, rowIndex);
+  const rowArr = getRow(matrix, rowIndex);
   // 所在列的数据
-  let colArr = getCol(matrix, rowIndex, colIndex);
+  const colArr = getCol(matrix, rowIndex, colIndex);
   // 所在宫的数据
-  let gonArr = getGon(matrix, rowIndex, colIndex);
+  const gonArr = getGon(matrix, rowIndex, colIndex);
   /**
    * 判断此处数字还没有被覆盖过,
    * 判断此处数字列、行、宫上没有此数字
@@ -51,7 +51,23 @@ export const check = (matrix, n, rowIndex, colIndex) => {
   return !(matrix[rowIndex][colIndex] !== 0 || rowArr.indexOf(n) !== -1 || colArr.indexOf(n) !== -1 || gonArr.indexOf(n) !== -1)
 }
 
+// 将数组中不合格的数据标记为false，否则标记为true
+export const makeArr = arr => arr.map( (item, index, arr) => item !== 0 && index === arr.indexOf(item) && index === arr.lastIndexOf(item) );
+
 /**
  * 校验矩阵数字的唯一性和存在性，返回对应的mark表
  * 如果，该位置上是0 ，或者出现重复，那么在该位置上标记false，否则标记true，返回mark矩阵
  */ 
+export const checkMatrix = matrix => {
+  const rows = getRows(matrix);
+  const cols = getCols(matrix);
+  const gons = getGons(matrix);
+
+  // 获取各个方位的make值，并且都恢复到正规的矩阵，然后进行合并
+  const r1 = rows.map(row => makeArr(row));
+  const r2 = getCols(cols.map(col => makeArr(col)));
+  const r3 = getGons(gons.map(gon => makeArr(gon)));
+  
+  // 将三个矩阵中的所有为true的标记为true，否则标记为false
+  return r1.map( (row, ri) => row.map( (col, ci) => (r1[ri][ci] && r2[ri][ci] && r3[ri][ci])))
+}

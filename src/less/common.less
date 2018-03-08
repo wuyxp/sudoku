@@ -51,9 +51,7 @@ header{
   align-items: center;
   display: flex;
   flex-direction: column;
-  .describe{
-
-  }
+  .describe{}
 }
 
 .matrix{
@@ -75,6 +73,13 @@ header{
       }
       &.right-col{
         border-right: 1px solid @borderColor;
+      }
+      &.default{
+        background: #FFFF99;
+      }
+      &.empty{
+        background: #FFFFFF;
+        text-indent: 9999rem;
       }
     }
     &:last-child{

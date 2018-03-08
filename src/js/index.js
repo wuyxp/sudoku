@@ -1,8 +1,7 @@
 console.log('入口文件');
-
-import { generator } from './generator';
+import {  } from './config';
+import { generator, spotMatrix } from './generator';
 import { renderMatrixDom } from './ui';
-
 import $ from 'jquery';
 
 const matrix = generator( state => {
@@ -13,6 +12,6 @@ const matrix = generator( state => {
   }
 });
 
-console.log(matrix);
+const palyMatrix = spotMatrix(matrix);
 
-renderMatrixDom(matrix, $('#container'));
+renderMatrixDom(palyMatrix, $('#container'));

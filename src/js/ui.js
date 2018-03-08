@@ -13,6 +13,7 @@ export const renderMatrixDom = (matrix, $container) => {
       let colBox = $('<span>');
       colBox.addClass(colClass[colIndex % BASE]);
       colBox.html(col);
+      colBox.addClass(col === 0 ? 'empty' : 'default');
       rowBox.append(colBox);
     });
     matrixBox.append(rowBox);

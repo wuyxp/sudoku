@@ -75,6 +75,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var MAX = exports.MAX = 9;
 var BASE = exports.BASE = Math.sqrt(MAX);
+var DEFAULT_LEVEL = exports.DEFAULT_LEVEL = 3; // enum [1, 2, 3, 4];
 
 /***/ }),
 /* 1 */
@@ -1776,6 +1777,8 @@ if(!noGlobal){window.jQuery=window.$=jQuery;}return jQuery;});
 "use strict";
 
 
+__webpack_require__(0);
+
 var _generator = __webpack_require__(3);
 
 var _ui = __webpack_require__(5);
@@ -1788,6 +1791,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 console.log('入口文件');
 
+
 var matrix = (0, _generator.generator)(function (state) {
   if (state.done) {
     (0, _jquery2.default)('#describe').html('\u521D\u59CB\u5316\u5B8C\u6210\uFF0C\u5171' + state.payload + '\u6B21');
@@ -1796,9 +1800,9 @@ var matrix = (0, _generator.generator)(function (state) {
   }
 });
 
-console.log(matrix);
+var palyMatrix = (0, _generator.spotMatrix)(matrix);
 
-(0, _ui.renderMatrixDom)(matrix, (0, _jquery2.default)('#container'));
+(0, _ui.renderMatrixDom)(palyMatrix, (0, _jquery2.default)('#container'));
 
 /***/ }),
 /* 3 */
@@ -1810,17 +1814,17 @@ console.log(matrix);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.generator = undefined;
+exports.spotMatrix = exports.generator = undefined;
 
 var _config = __webpack_require__(0);
 
 var _toolkit = __webpack_require__(4);
 
-// 生成随机9宫格
+// 生成随机全局的矩阵盘
 var generator = exports.generator = function generator() {
   var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 
-
+  // 根据传入的值，和行数，还有矩阵，每次填完当前行，则继续递归下一行，否则，向上退一行，接着走for循环
   var fillRow = function fillRow(n, rowIndex, matrix) {
     if (rowIndex >= _config.MAX) {
       return true;
@@ -1861,12 +1865,21 @@ var generator = exports.generator = function generator() {
   while (/0/g.test(matrix.toString())) {
     matrix = _generator();
   }
-  // console.log(`生成完成，生成了${loading}次!`); 
   callback({
     done: true,
     payload: loading
   });
   return matrix;
+};
+
+// 根据完成后的矩阵，生成用于玩家玩的部分矩阵
+var spotMatrix = exports.spotMatrix = function spotMatrix(matrix) {
+  var level = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _config.DEFAULT_LEVEL;
+  return matrix.map(function (row) {
+    return row.map(function (col) {
+      return Math.random() * _config.MAX > level ? col : 0;
+    });
+  });
 };
 
 /***/ }),
@@ -1879,7 +1892,7 @@ var generator = exports.generator = function generator() {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.check = exports.getGons = exports.getCols = exports.getRows = exports.getGon = exports.getCol = exports.getRow = exports.shuffle = exports.makeMatrix = exports.makeRow = undefined;
+exports.checkMatrix = exports.makeArr = exports.check = exports.getGons = exports.getCols = exports.getRows = exports.getGon = exports.getCol = exports.getRow = exports.shuffle = exports.makeMatrix = exports.makeRow = undefined;
 
 var _config = __webpack_require__(0);
 
@@ -1948,33 +1961,54 @@ var getGons = exports.getGons = function getGons(matrix) {
   });
 };
 
-var textMatrix = makeMatrix(_config.MAX)(_config.MAX).map(function (row) {
-  return row.map(function (col, colindex) {
-    return colindex;
-  });
-});
-;
-
 // 检查所填写中数据是否合法
 var check = exports.check = function check(matrix, n, rowIndex, colIndex) {
   // 所在行的数据
-  var rowArr = getRow(matrix, rowIndex);;
+  var rowArr = getRow(matrix, rowIndex);
   // 所在列的数据
   var colArr = getCol(matrix, rowIndex, colIndex);
-
   // 所在宫的数据
   var gonArr = getGon(matrix, rowIndex, colIndex);
+  /**
+   * 判断此处数字还没有被覆盖过,
+   * 判断此处数字列、行、宫上没有此数字
+   */
+  return !(matrix[rowIndex][colIndex] !== 0 || rowArr.indexOf(n) !== -1 || colArr.indexOf(n) !== -1 || gonArr.indexOf(n) !== -1);
+};
 
-  // 判断此处数字还没有被覆盖过
-  if (matrix[rowIndex][colIndex] !== 0) {
-    return false;
-  }
-  // 判断此处数字列、行、宫上没有此数字
-  if (rowArr.indexOf(n) !== -1 || colArr.indexOf(n) !== -1 || gonArr.indexOf(n) !== -1) {
-    return false;
-  }
-  // 判断此处数字宫中没有此数字
-  return true;
+// 将数组中不合格的数据标记为false，否则标记为true
+var makeArr = exports.makeArr = function makeArr(arr) {
+  return arr.map(function (item, index, arr) {
+    return item !== 0 && index === arr.indexOf(item) && index === arr.lastIndexOf(item);
+  });
+};
+
+/**
+ * 校验矩阵数字的唯一性和存在性，返回对应的mark表
+ * 如果，该位置上是0 ，或者出现重复，那么在该位置上标记false，否则标记true，返回mark矩阵
+ */
+var checkMatrix = exports.checkMatrix = function checkMatrix(matrix) {
+  var rows = getRows(matrix);
+  var cols = getCols(matrix);
+  var gons = getGons(matrix);
+
+  // 获取各个方位的make值，并且都恢复到正规的矩阵，然后进行合并
+  var r1 = rows.map(function (row) {
+    return makeArr(row);
+  });
+  var r2 = getCols(cols.map(function (col) {
+    return makeArr(col);
+  }));
+  var r3 = getGons(gons.map(function (gon) {
+    return makeArr(gon);
+  }));
+
+  // 将三个矩阵中的所有为true的标记为true，否则标记为false
+  return r1.map(function (row, ri) {
+    return row.map(function (col, ci) {
+      return r1[ri][ci] && r2[ri][ci] && r3[ri][ci];
+    });
+  });
 };
 
 /***/ }),
@@ -2010,6 +2044,7 @@ var renderMatrixDom = exports.renderMatrixDom = function renderMatrixDom(matrix,
       var colBox = (0, _jquery2.default)('<span>');
       colBox.addClass(colClass[colIndex % _config.BASE]);
       colBox.html(col);
+      colBox.addClass(col === 0 ? 'empty' : 'default');
       rowBox.append(colBox);
     });
     matrixBox.append(rowBox);
