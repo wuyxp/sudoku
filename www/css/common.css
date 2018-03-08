@@ -44,7 +44,8 @@ header {
   font-size: 2rem;
   text-indent: 1rem;
 }
-.setting {
+.setting,
+.tip {
   background: #FFFFCC;
   height: 5rem;
   justify-content: center;

@@ -3,31 +3,34 @@ import {MAX, BASE, DEFAULT_LEVEL} from './config';
 
 import { generator, spotMatrix } from './generator';
 import { checkMatrix } from './toolkit';
+import { setTimeout } from 'timers';
 
 // 将生成的矩阵展示在页面上
 
 export class Render {
   constructor(config = {}){
-    const {initCallback, container, dashboard} = config;
+    const {initCallback, container, dashboard, successFun, errorFun} = config;
     this.matrixDom;
     this.pupopDom;
     this.targetDom;
+    this.initCallback = initCallback;
+    this.container = container;
+    this.dashboard = dashboard;
     this.emptyNum = 0; // 初始化差的空白数据
     this.init(initCallback, container, dashboard);
     this.cacheDom = []; // 检索到错误dom的缓存
     this.level = DEFAULT_LEVEL;
+    this.successFun = successFun;
+    this.errorFun = errorFun;
   }
   // 初始化
-  init(initCallback, container, dashboard){
-    this.matrix = generator(initCallback);
+  init(){
+    this.matrix = generator(this.initCallback);
     this.spotMatrix = spotMatrix(this.matrix, this.level);
     this._spotMatrix = JSON.parse(JSON.stringify(this.spotMatrix));
     this.emptyNum = this.setEmptyNum();
-    this.renderMatrixDom(container);
-    this.renderPupopDom(dashboard);
-    this.initCallback = initCallback;
-    this.container = container;
-    this.dashboard = dashboard;
+    this.renderMatrixDom(this.container);
+    this.renderPupopDom(this.dashboard);
     this.initBind();
   }
 
@@ -140,7 +143,7 @@ export class Render {
   reBuildMatrix(){
     this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
     this.dashboard.html('');
-    this.init(this.callback, this.container, this.dashboard);
+    this.init();
   }
 
   // 绑定重建
@@ -161,7 +164,13 @@ export class Render {
     this.emptyNum = this.setEmptyNum();
     if(this.emptyNum === 0){
       if(this.checkMatrixDom()){
-        alert('潇洒哥最棒，再来一把吧！');
+        this.successFun && this.successFun();
+        setTimeout(() => {
+          this.level++;
+          this.reBuildMatrix();
+        },200)
+      }else{
+        this.errorFun && this.errorFun();
       }
     }
   }
