@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import {MAX, BASE, DEFAULT_LEVEL} from './config';
 
 import { generator, spotMatrix } from './generator';

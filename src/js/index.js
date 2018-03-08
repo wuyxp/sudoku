@@ -1,5 +1,4 @@
 console.log('入口文件');
-import $ from 'jquery';
 import { Render } from './ui';
 import {SUCCESS_TIP, ERROR_TIP} from './config';
 
