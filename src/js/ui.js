@@ -12,14 +12,16 @@ export class Render {
     this.matrixDom;
     this.pupopDom;
     this.targetDom;
+    this.emptyNum = 0; // 初始化差的空白数据
     this.init(initCallback, container, dashboard);
-    this.cacheDom = [];
+    this.cacheDom = []; // 检索到错误dom的缓存
   }
   // 初始化
   init(initCallback, container, dashboard){
     this.matrix = generator(initCallback);
     this.spotMatrix = spotMatrix(this.matrix);
     this._spotMatrix = JSON.parse(JSON.stringify(this.spotMatrix));
+    this.emptyNum = this.setEmptyNum();
     this.renderMatrixDom(container);
     this.renderPupopDom(dashboard);
     this.initCallback = initCallback;
@@ -80,21 +82,30 @@ export class Render {
     }).show();
   }
 
+  // 检查还有多少没有设置成功
+  setEmptyNum(){
+    return this.spotMatrix.reduce((result, row) => row.reduce((r, col) => r+(col ? 0 : 1), result),0);
+  }
+  // 检查矩阵
+  checkMatrixDom(){
+    const mark = checkMatrix(this.spotMatrix);
+    this.cacheDom = [];
+    mark.forEach((row, rowIndex) => row.forEach((col, colIndex) => {
+      if(!mark[rowIndex][colIndex]){
+        let colDom = this.matrixDom.find('div').eq(rowIndex).find('span').eq(colIndex);
+        if(colDom.hasClass('empty') && colDom.html() != 0){
+          colDom.addClass('error-mark');
+          this.cacheDom.push(colDom);
+        }
+      }
+    }));
+    return !this.cacheDom.length;
+  }
   // 绑定检查
   initCheck(checkDom){
     this.checkDom = checkDom;
     this.checkDom.on('click', () => {
-      const mark = checkMatrix(this.spotMatrix);
-      this.cacheDom = [];
-      mark.forEach((row, rowIndex) => row.forEach((col, colIndex) => {
-        if(!mark[rowIndex][colIndex]){
-          let colDom = this.matrixDom.find('div').eq(rowIndex).find('span').eq(colIndex);
-          if(colDom.hasClass('empty') && colDom.html() != 0){
-            colDom.addClass('error-mark');
-            this.cacheDom.push(colDom);
-          }
-        }
-      }));
+      this.checkMatrixDom();
     })
   }
 
@@ -114,6 +125,7 @@ export class Render {
     this.clearDom = clearDom;
     this.clearDom.on('click', () => {
       this.cacheDom.forEach(col => {
+        this.emptyNum++;
         col.html(0).removeClass('error-mark').addClass('hide-font');
       })
     }) 
@@ -134,6 +146,16 @@ export class Render {
     this.pupopDom.hide();
   }
 
+  // 检查是否完毕的状态
+  checkOver(){
+    this.emptyNum = this.setEmptyNum();
+    if(this.emptyNum === 0){
+      if(this.checkMatrixDom()){
+        alert('潇洒哥最棒，再来一把吧！');
+      }
+    }
+  }
+
   // 设置值
   setColValue(value){
     const {colDom, row, col} = this.targetDom;
@@ -145,6 +167,7 @@ export class Render {
       colDom.removeClass('hide-font');
     }
     this.spotMatrix[row][col] = parseInt(value);
+    this.checkOver();
   }
 
   // 设置mark颜色
@@ -185,6 +208,11 @@ export class Render {
         this.setColClass(colDom.attr('className'));
       }
       this.hidePupop();
+    })
+    $('body').on('click',e => {
+      if($(e.target).closest('#matrix').length === 0){
+        this.hidePupop();
+      }
     })
   }
 

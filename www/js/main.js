@@ -2007,8 +2007,9 @@ var Render = exports.Render = function () {
     this.matrixDom;
     this.pupopDom;
     this.targetDom;
+    this.emptyNum = 0; // 初始化差的空白数据
     this.init(initCallback, container, dashboard);
-    this.cacheDom = [];
+    this.cacheDom = []; // 检索到错误dom的缓存
   }
   // 初始化
 
@@ -2019,6 +2020,7 @@ var Render = exports.Render = function () {
       this.matrix = (0, _generator.generator)(initCallback);
       this.spotMatrix = (0, _generator.spotMatrix)(this.matrix);
       this._spotMatrix = JSON.parse(JSON.stringify(this.spotMatrix));
+      this.emptyNum = this.setEmptyNum();
       this.renderMatrixDom(container);
       this.renderPupopDom(dashboard);
       this.initCallback = initCallback;
@@ -2078,28 +2080,49 @@ var Render = exports.Render = function () {
       }).show();
     }
 
+    // 检查还有多少没有设置成功
+
+  }, {
+    key: 'setEmptyNum',
+    value: function setEmptyNum() {
+      return this.spotMatrix.reduce(function (result, row) {
+        return row.reduce(function (r, col) {
+          return r + (col ? 0 : 1);
+        }, result);
+      }, 0);
+    }
+    // 检查矩阵
+
+  }, {
+    key: 'checkMatrixDom',
+    value: function checkMatrixDom() {
+      var _this2 = this;
+
+      var mark = (0, _toolkit.checkMatrix)(this.spotMatrix);
+      this.cacheDom = [];
+      mark.forEach(function (row, rowIndex) {
+        return row.forEach(function (col, colIndex) {
+          if (!mark[rowIndex][colIndex]) {
+            var colDom = _this2.matrixDom.find('div').eq(rowIndex).find('span').eq(colIndex);
+            if (colDom.hasClass('empty') && colDom.html() != 0) {
+              colDom.addClass('error-mark');
+              _this2.cacheDom.push(colDom);
+            }
+          }
+        });
+      });
+      return !this.cacheDom.length;
+    }
     // 绑定检查
 
   }, {
     key: 'initCheck',
     value: function initCheck(checkDom) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.checkDom = checkDom;
       this.checkDom.on('click', function () {
-        var mark = (0, _toolkit.checkMatrix)(_this2.spotMatrix);
-        _this2.cacheDom = [];
-        mark.forEach(function (row, rowIndex) {
-          return row.forEach(function (col, colIndex) {
-            if (!mark[rowIndex][colIndex]) {
-              var colDom = _this2.matrixDom.find('div').eq(rowIndex).find('span').eq(colIndex);
-              if (colDom.hasClass('empty') && colDom.html() != 0) {
-                colDom.addClass('error-mark');
-                _this2.cacheDom.push(colDom);
-              }
-            }
-          });
-        });
+        _this3.checkMatrixDom();
       });
     }
 
@@ -2108,14 +2131,14 @@ var Render = exports.Render = function () {
   }, {
     key: 'initReset',
     value: function initReset(resetDom) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.resetDom = resetDom;
       this.resetDom.on('click', function () {
-        _this3.spotMatrix = JSON.parse(JSON.stringify(_this3._spotMatrix));
-        _this3.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
-        _this3.renderMatrixDom(_this3.container);
-        _this3.initBindMatrixDom();
+        _this4.spotMatrix = JSON.parse(JSON.stringify(_this4._spotMatrix));
+        _this4.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
+        _this4.renderMatrixDom(_this4.container);
+        _this4.initBindMatrixDom();
       });
     }
 
@@ -2124,11 +2147,12 @@ var Render = exports.Render = function () {
   }, {
     key: 'initClear',
     value: function initClear(clearDom) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.clearDom = clearDom;
       this.clearDom.on('click', function () {
-        _this4.cacheDom.forEach(function (col) {
+        _this5.cacheDom.forEach(function (col) {
+          _this5.emptyNum++;
           col.html(0).removeClass('error-mark').addClass('hide-font');
         });
       });
@@ -2139,13 +2163,13 @@ var Render = exports.Render = function () {
   }, {
     key: 'initRebuild',
     value: function initRebuild(reBuild) {
-      var _this5 = this;
+      var _this6 = this;
 
       this.reBuild = reBuild;
       this.reBuild.on('click', function () {
-        _this5.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
-        _this5.dashboard.html('');
-        _this5.init(_this5.callback, _this5.container, _this5.dashboard);
+        _this6.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
+        _this6.dashboard.html('');
+        _this6.init(_this6.callback, _this6.container, _this6.dashboard);
       });
     }
 
@@ -2155,6 +2179,20 @@ var Render = exports.Render = function () {
     key: 'hidePupop',
     value: function hidePupop() {
       this.pupopDom.hide();
+    }
+
+    // 检查是否完毕的状态
+
+  }, {
+    key: 'checkOver',
+    value: function checkOver() {
+      this.emptyNum = this.setEmptyNum();
+      console.log(this.emptyNum);
+      if (this.emptyNum === 0) {
+        if (this.checkMatrixDom()) {
+          alert('潇洒哥最棒');
+        }
+      }
     }
 
     // 设置值
@@ -2175,6 +2213,7 @@ var Render = exports.Render = function () {
         colDom.removeClass('hide-font');
       }
       this.spotMatrix[row][col] = parseInt(value);
+      this.checkOver();
     }
 
     // 设置mark颜色
@@ -2200,7 +2239,7 @@ var Render = exports.Render = function () {
   }, {
     key: 'initBindMatrixDom',
     value: function initBindMatrixDom() {
-      var _this6 = this;
+      var _this7 = this;
 
       this.matrixDom.on('click', '.empty', function (e) {
         var colDom = (0, _jquery2.default)(e.target);
@@ -2209,10 +2248,10 @@ var Render = exports.Render = function () {
             row = _colDom$data.row,
             col = _colDom$data.col;
 
-        _this6.targetDom = {
+        _this7.targetDom = {
           colDom: colDom, row: row, col: col
         };
-        _this6.showPupop(colDom);
+        _this7.showPupop(colDom);
       });
     }
 
@@ -2221,18 +2260,23 @@ var Render = exports.Render = function () {
   }, {
     key: 'initBindPupopDom',
     value: function initBindPupopDom() {
-      var _this7 = this;
+      var _this8 = this;
 
       this.pupopDom.on('click', 'span', function (e) {
         var colDom = (0, _jquery2.default)(e.target);
         var text = colDom.text();
-        _this7.targetDom.colDom.removeClass('error-mark');
+        _this8.targetDom.colDom.removeClass('error-mark');
         if (text !== 'm') {
-          _this7.setColValue(/\d/.test(text) ? text : 0);
+          _this8.setColValue(/\d/.test(text) ? text : 0);
         } else {
-          _this7.setColClass(colDom.attr('className'));
+          _this8.setColClass(colDom.attr('className'));
         }
-        _this7.hidePupop();
+        _this8.hidePupop();
+      });
+      (0, _jquery2.default)('body').on('click', function (e) {
+        if ((0, _jquery2.default)(e.target).closest('#matrix').length === 0) {
+          _this8.hidePupop();
+        }
       });
     }
 
