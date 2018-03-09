@@ -1,6 +1,6 @@
 console.log('入口文件');
 import { Render } from './ui';
-import {SUCCESS_TIP, ERROR_TIP} from './config';
+import {SUCCESS_TIP, ERROR_TIP, MAX_LEVEL} from './config';
 
 const initCallback = state => {
   if(state.done){
@@ -9,17 +9,20 @@ const initCallback = state => {
     $('#describe').html(`正在第${state.payload}次初始化数独`);
   }
 };
-const successFun = () => {
+const successFun = (level) => {
   const tip = SUCCESS_TIP[parseInt($('#jumpList').val()) % (SUCCESS_TIP.length) ];
-  $('#overTip').html(tip)
+  $('#describe').html(tip);
+  let resultLevel = (level + 1 > MAX_LEVEL ) ? MAX_LEVEL : level + 1;
+  $('#jumpList').val(resultLevel);
 };
 const errorFun = () => {
   const tip = ERROR_TIP[parseInt($('#jumpList').val()) % (ERROR_TIP.length) ];
-  $('#overTip').html(tip); 
+  $('#describe').html(tip); 
 };
 const render = new Render({
   initCallback,
-  container: $('#container'),
+  describe: $('#describe'),
+  matrix: $('#matrix'),
   dashboard: $('#dashboard'),
   successFun,
   errorFun 

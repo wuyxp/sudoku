@@ -1,4 +1,7 @@
 import {MAX, BASE} from './config';
+
+// 随机从数组中取出一个值
+export const getRandomArr = (arr, i=0) => Math.floor(i + (Math.random() * (arr.length - i)));
 // 返回行数组
 export const makeRow = length => Array(length).fill(0);
 
@@ -8,7 +11,7 @@ export const makeMatrix = length => rowLength => Array(length).fill(0).map(i => 
 // 洗牌算法
 export const shuffle = arr => {
   for(let i = 0,l = arr.length ; i < l ; i++){
-    let randomNum = Math.floor(i+(Math.random()*(l-i)));
+    let randomNum = getRandomArr(arr, i);
     [arr[i], arr[randomNum]] = [arr[randomNum], arr[i]];
   }
   return arr;
@@ -67,7 +70,7 @@ export const checkMatrix = matrix => {
   const r1 = rows.map(row => makeArr(row));
   const r2 = getCols(cols.map(col => makeArr(col)));
   const r3 = getGons(gons.map(gon => makeArr(gon)));
-  
+
   // 将三个矩阵中的所有为true的标记为true，否则标记为false
   return r1.map( (row, ri) => row.map( (col, ci) => (r1[ri][ci] && r2[ri][ci] && r3[ri][ci])))
 }

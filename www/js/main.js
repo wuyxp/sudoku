@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -78,6 +78,7 @@ var BASE = exports.BASE = Math.sqrt(MAX);
 var DEFAULT_LEVEL = exports.DEFAULT_LEVEL = 1; // enum [1, 2, 3, 4];
 var SUCCESS_TIP = exports.SUCCESS_TIP = ['潇洒哥最棒', '潇洒哥最帅', '潇洒哥爱你', '天下无敌潇洒哥'];
 var ERROR_TIP = exports.ERROR_TIP = ['渣比，过不去了吧'];
+var MAX_LEVEL = exports.MAX_LEVEL = 8;
 
 /***/ }),
 /* 1 */
@@ -89,10 +90,15 @@ var ERROR_TIP = exports.ERROR_TIP = ['渣比，过不去了吧'];
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.checkMatrix = exports.makeArr = exports.check = exports.getGons = exports.getCols = exports.getRows = exports.getGon = exports.getCol = exports.getRow = exports.shuffle = exports.makeMatrix = exports.makeRow = undefined;
+exports.checkMatrix = exports.makeArr = exports.check = exports.getGons = exports.getCols = exports.getRows = exports.getGon = exports.getCol = exports.getRow = exports.shuffle = exports.makeMatrix = exports.makeRow = exports.getRandomArr = undefined;
 
 var _config = __webpack_require__(0);
 
+// 随机从数组中取出一个值
+var getRandomArr = exports.getRandomArr = function getRandomArr(arr) {
+  var i = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  return Math.floor(i + Math.random() * (arr.length - i));
+};
 // 返回行数组
 var makeRow = exports.makeRow = function makeRow(length) {
   return Array(length).fill(0);
@@ -110,7 +116,7 @@ var makeMatrix = exports.makeMatrix = function makeMatrix(length) {
 // 洗牌算法
 var shuffle = exports.shuffle = function shuffle(arr) {
   for (var i = 0, l = arr.length; i < l; i++) {
-    var randomNum = Math.floor(i + Math.random() * (l - i));
+    var randomNum = getRandomArr(arr, i);
     var _ref = [arr[randomNum], arr[i]];
     arr[i] = _ref[0];
     arr[randomNum] = _ref[1];
@@ -215,37 +221,7 @@ var checkMatrix = exports.checkMatrix = function checkMatrix(matrix) {
 "use strict";
 
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var g;
-
-// This works in non-strict mode
-g = function () {
-	return this;
-}();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1, eval)("this");
-} catch (e) {
-	// This works if the window reference is available
-	if ((typeof window === "undefined" ? "undefined" : _typeof(window)) === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _ui = __webpack_require__(4);
+var _ui = __webpack_require__(3);
 
 var _config = __webpack_require__(0);
 
@@ -259,17 +235,20 @@ var initCallback = function initCallback(state) {
     $('#describe').html('\u6B63\u5728\u7B2C' + state.payload + '\u6B21\u521D\u59CB\u5316\u6570\u72EC');
   }
 };
-var successFun = function successFun() {
+var successFun = function successFun(level) {
   var tip = _config.SUCCESS_TIP[parseInt($('#jumpList').val()) % _config.SUCCESS_TIP.length];
-  $('#overTip').html(tip);
+  $('#describe').html(tip);
+  var resultLevel = level + 1 > _config.MAX_LEVEL ? _config.MAX_LEVEL : level + 1;
+  $('#jumpList').val(resultLevel);
 };
 var errorFun = function errorFun() {
   var tip = _config.ERROR_TIP[parseInt($('#jumpList').val()) % _config.ERROR_TIP.length];
-  $('#overTip').html(tip);
+  $('#describe').html(tip);
 };
 var render = new _ui.Render({
   initCallback: initCallback,
-  container: $('#container'),
+  describe: $('#describe'),
+  matrix: $('#matrix'),
   dashboard: $('#dashboard'),
   successFun: successFun,
   errorFun: errorFun
@@ -316,7 +295,7 @@ $('#answer').on('click', function () {
 });
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -327,15 +306,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Render = undefined;
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _config = __webpack_require__(0);
 
-var _generator = __webpack_require__(5);
+var _generator = __webpack_require__(4);
 
 var _toolkit = __webpack_require__(1);
 
-var _timers = __webpack_require__(6);
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -348,23 +329,23 @@ var Render = function () {
     _classCallCheck(this, Render);
 
     var initCallback = config.initCallback,
-        container = config.container,
+        describe = config.describe,
+        matrix = config.matrix,
         dashboard = config.dashboard,
         successFun = config.successFun,
         errorFun = config.errorFun;
 
-    this.matrixDom;
-    this.pupopDom;
+    this.matrixDom = matrix;
     this.targetDom;
     this.initCallback = initCallback;
-    this.container = container;
+    this.describeDom = describe;
     this.dashboard = dashboard;
-    this.emptyNum = 0; // 初始化差的空白数据
-    this.init();
+    this.emptyArr = []; // 初始化差的空白数据
     this.cacheDom = []; // 检索到错误dom的缓存
     this.level = _config.DEFAULT_LEVEL;
     this.successFun = successFun;
     this.errorFun = errorFun;
+    this.init();
   }
   // 初始化
 
@@ -373,11 +354,14 @@ var Render = function () {
     key: 'init',
     value: function init() {
       this.matrix = (0, _generator.generator)(this.initCallback);
+      if (this.level >= _config.MAX_LEVEL) {
+        this.level = _config.MAX_LEVEL;
+      }
       this.spotMatrix = (0, _generator.spotMatrix)(this.matrix, this.level);
       this._spotMatrix = JSON.parse(JSON.stringify(this.spotMatrix));
-      this.emptyNum = this.setEmptyNum();
-      this.renderMatrixDom(this.container);
-      this.renderPupopDom(this.dashboard);
+      this.emptyArr = this.setEmptyArr();
+      this.renderMatrixDom();
+      this.renderPupopDom();
       this.initBind();
     }
 
@@ -385,14 +369,13 @@ var Render = function () {
 
   }, {
     key: 'renderMatrixDom',
-    value: function renderMatrixDom($container) {
+    value: function renderMatrixDom() {
       var _this = this;
 
       this.cacheDom = [];
-      this.matrixDom = $('<div>').addClass('matrix').attr('id', 'matrix');
       var colClass = ['left-col', 'middle-col', 'right-col'];
       var rowClass = ['top-row', 'middle-row', 'bottom-row'];
-
+      this.matrixDom.html('');
       this.spotMatrix.forEach(function (row, rowIndex) {
         var rowBox = $('<div>');
         rowBox.addClass(rowClass[rowIndex % _config.BASE]);
@@ -402,18 +385,16 @@ var Render = function () {
         });
         _this.matrixDom.append(rowBox);
       });
-
-      $container.append(this.matrixDom);
     }
 
     // 渲染弹出层
 
   }, {
     key: 'renderPupopDom',
-    value: function renderPupopDom($dashboard) {
+    value: function renderPupopDom() {
+      this.dashboard.html('');
       var html = '<div>\n        <span>1</span><span>2</span><span>3</span>\n      </div>\n      <div>\n        <span>4</span><span>5</span><span>6</span>\n      </div>\n      <div>\n        <span>7</span><span>8</span><span>9</span>\n      </div>\n      <div>\n        <span class="hide-font make1" className="make1">m</span><span>C</span><span class="hide-font make2" className="make2">m</span>\n      </div>';
-      this.pupopDom = $dashboard;
-      $dashboard.append($(html));
+      this.dashboard.append($(html));
     }
 
     //设置关卡
@@ -435,7 +416,7 @@ var Render = function () {
 
       top = top - colDom.height() - 2;
       left = left - colDom.width() - 2;
-      this.pupopDom.css({
+      this.dashboard.css({
         top: top, left: left
       }).show();
     }
@@ -443,13 +424,16 @@ var Render = function () {
     // 检查还有多少没有设置成功
 
   }, {
-    key: 'setEmptyNum',
-    value: function setEmptyNum() {
-      return this.spotMatrix.reduce(function (result, row) {
-        return row.reduce(function (r, col) {
-          return r + (col ? 0 : 1);
+    key: 'setEmptyArr',
+    value: function setEmptyArr() {
+      return this.spotMatrix.reduce(function (result, row, rowIndex) {
+        return row.reduce(function (r, col, colIndex) {
+          if (col == 0) {
+            return [].concat(_toConsumableArray(r), [[rowIndex, colIndex]]);
+          }
+          return r;
         }, result);
-      }, 0);
+      }, []);
     }
     // 检查矩阵
 
@@ -462,8 +446,9 @@ var Render = function () {
       this.cacheDom = [];
       mark.forEach(function (row, rowIndex) {
         return row.forEach(function (col, colIndex) {
+          var colDom = _this2.matrixDom.find('div').eq(rowIndex).find('span').eq(colIndex);
+          colDom.removeClass('error-mark');
           if (!mark[rowIndex][colIndex]) {
-            var colDom = _this2.matrixDom.find('div').eq(rowIndex).find('span').eq(colIndex);
             if (colDom.hasClass('empty') && colDom.html() != 0) {
               colDom.addClass('error-mark');
               _this2.cacheDom.push(colDom);
@@ -487,8 +472,7 @@ var Render = function () {
     key: 'reset',
     value: function reset() {
       this.spotMatrix = JSON.parse(JSON.stringify(this._spotMatrix));
-      this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
-      this.renderMatrixDom(this.container);
+      this.renderMatrixDom();
       this.initBindMatrixDom();
     }
 
@@ -497,17 +481,13 @@ var Render = function () {
   }, {
     key: 'clear',
     value: function clear(clearDom) {
-      var _this3 = this;
-
       this.cacheDom.forEach(function (col) {
-        _this3.emptyNum++;
         col.html(0).removeClass('error-mark').addClass('hide-font');
       });
     }
   }, {
     key: 'reBuildMatrix',
     value: function reBuildMatrix() {
-      this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
       this.dashboard.html('');
       this.init();
     }
@@ -532,7 +512,22 @@ var Render = function () {
 
   }, {
     key: 'hint',
-    value: function hint() {}
+    value: function hint() {
+      this.emptyArr = this.setEmptyArr();
+      if (this.emptyArr.length) {
+        var hintNum = this.emptyArr[(0, _toolkit.getRandomArr)(this.emptyArr)];
+
+        var _hintNum = _slicedToArray(hintNum, 2),
+            rowIndex = _hintNum[0],
+            colIndex = _hintNum[1];
+
+        var colDom = this.matrixDom.find('div').eq(rowIndex).find('span').eq(colIndex);
+        this.spotMatrix[rowIndex][colIndex] = this.matrix[rowIndex][colIndex];
+        colDom.html(this.matrix[rowIndex][colIndex]).removeClass('hide-font');
+      } else {
+        this.checkOver();
+      }
+    }
 
     // 查看答案
 
@@ -545,7 +540,7 @@ var Render = function () {
   }, {
     key: 'hidePupop',
     value: function hidePupop() {
-      this.pupopDom.hide();
+      this.dashboard.hide();
     }
 
     // 检查是否完毕的状态
@@ -553,15 +548,15 @@ var Render = function () {
   }, {
     key: 'checkOver',
     value: function checkOver() {
-      var _this4 = this;
+      var _this3 = this;
 
-      this.emptyNum = this.setEmptyNum();
-      if (this.emptyNum === 0) {
+      this.emptyArr = this.setEmptyArr();
+      if (this.emptyArr.length === 0) {
         if (this.checkMatrixDom()) {
-          this.successFun && this.successFun();
-          (0, _timers.setTimeout)(function () {
-            _this4.level++;
-            _this4.reBuildMatrix();
+          this.successFun && this.successFun(this.level);
+          setTimeout(function () {
+            _this3.level++;
+            _this3.reBuildMatrix();
           }, 200);
         } else {
           this.errorFun && this.errorFun();
@@ -613,7 +608,7 @@ var Render = function () {
   }, {
     key: 'initBindMatrixDom',
     value: function initBindMatrixDom() {
-      var _this5 = this;
+      var _this4 = this;
 
       this.matrixDom.on('click', '.empty', function (e) {
         var colDom = $(e.target);
@@ -622,10 +617,10 @@ var Render = function () {
             row = _colDom$data.row,
             col = _colDom$data.col;
 
-        _this5.targetDom = {
+        _this4.targetDom = {
           colDom: colDom, row: row, col: col
         };
-        _this5.showPupop(colDom);
+        _this4.showPupop(colDom);
       });
     }
 
@@ -634,22 +629,22 @@ var Render = function () {
   }, {
     key: 'initBindPupopDom',
     value: function initBindPupopDom() {
-      var _this6 = this;
+      var _this5 = this;
 
-      this.pupopDom.on('click', 'span', function (e) {
+      this.dashboard.on('click', 'span', function (e) {
         var colDom = $(e.target);
         var text = colDom.text();
-        _this6.targetDom.colDom.removeClass('error-mark');
+        _this5.targetDom.colDom.removeClass('error-mark');
         if (text !== 'm') {
-          _this6.setColValue(/\d/.test(text) ? text : 0);
+          _this5.setColValue(/\d/.test(text) ? text : 0);
         } else {
-          _this6.setColClass(colDom.attr('className'));
+          _this5.setColClass(colDom.attr('className'));
         }
-        _this6.hidePupop();
+        _this5.hidePupop();
       });
       $('body').on('click', function (e) {
         if ($(e.target).closest('#matrix').length === 0) {
-          _this6.hidePupop();
+          _this5.hidePupop();
         }
       });
     }
@@ -670,7 +665,7 @@ var Render = function () {
 exports.Render = Render;
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -745,453 +740,6 @@ var spotMatrix = exports.spotMatrix = function spotMatrix(matrix) {
       return Math.random() * _config.MAX > level ? col : 0;
     });
   });
-};
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-
-var apply = Function.prototype.apply;
-
-// DOM APIs, for completeness
-
-exports.setTimeout = function () {
-  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
-};
-exports.setInterval = function () {
-  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
-};
-exports.clearTimeout = exports.clearInterval = function (timeout) {
-  if (timeout) {
-    timeout.close();
-  }
-};
-
-function Timeout(id, clearFn) {
-  this._id = id;
-  this._clearFn = clearFn;
-}
-Timeout.prototype.unref = Timeout.prototype.ref = function () {};
-Timeout.prototype.close = function () {
-  this._clearFn.call(window, this._id);
-};
-
-// Does not start the time, just sets up the members needed.
-exports.enroll = function (item, msecs) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = msecs;
-};
-
-exports.unenroll = function (item) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = -1;
-};
-
-exports._unrefActive = exports.active = function (item) {
-  clearTimeout(item._idleTimeoutId);
-
-  var msecs = item._idleTimeout;
-  if (msecs >= 0) {
-    item._idleTimeoutId = setTimeout(function onTimeout() {
-      if (item._onTimeout) item._onTimeout();
-    }, msecs);
-  }
-};
-
-// setimmediate attaches itself to the global object
-__webpack_require__(7);
-// On some exotic environments, it's not clear which object `setimmeidate` was
-// able to install onto.  Search each possibility in the same order as the
-// `setimmediate` library.
-exports.setImmediate = typeof self !== "undefined" && self.setImmediate || typeof global !== "undefined" && global.setImmediate || undefined && undefined.setImmediate;
-exports.clearImmediate = typeof self !== "undefined" && self.clearImmediate || typeof global !== "undefined" && global.clearImmediate || undefined && undefined.clearImmediate;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global, process) {
-
-(function (global, undefined) {
-    "use strict";
-
-    if (global.setImmediate) {
-        return;
-    }
-
-    var nextHandle = 1; // Spec says greater than zero
-    var tasksByHandle = {};
-    var currentlyRunningATask = false;
-    var doc = global.document;
-    var registerImmediate;
-
-    function setImmediate(callback) {
-        // Callback can either be a function or a string
-        if (typeof callback !== "function") {
-            callback = new Function("" + callback);
-        }
-        // Copy function arguments
-        var args = new Array(arguments.length - 1);
-        for (var i = 0; i < args.length; i++) {
-            args[i] = arguments[i + 1];
-        }
-        // Store and register the task
-        var task = { callback: callback, args: args };
-        tasksByHandle[nextHandle] = task;
-        registerImmediate(nextHandle);
-        return nextHandle++;
-    }
-
-    function clearImmediate(handle) {
-        delete tasksByHandle[handle];
-    }
-
-    function run(task) {
-        var callback = task.callback;
-        var args = task.args;
-        switch (args.length) {
-            case 0:
-                callback();
-                break;
-            case 1:
-                callback(args[0]);
-                break;
-            case 2:
-                callback(args[0], args[1]);
-                break;
-            case 3:
-                callback(args[0], args[1], args[2]);
-                break;
-            default:
-                callback.apply(undefined, args);
-                break;
-        }
-    }
-
-    function runIfPresent(handle) {
-        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
-        // So if we're currently running a task, we'll need to delay this invocation.
-        if (currentlyRunningATask) {
-            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
-            // "too much recursion" error.
-            setTimeout(runIfPresent, 0, handle);
-        } else {
-            var task = tasksByHandle[handle];
-            if (task) {
-                currentlyRunningATask = true;
-                try {
-                    run(task);
-                } finally {
-                    clearImmediate(handle);
-                    currentlyRunningATask = false;
-                }
-            }
-        }
-    }
-
-    function installNextTickImplementation() {
-        registerImmediate = function registerImmediate(handle) {
-            process.nextTick(function () {
-                runIfPresent(handle);
-            });
-        };
-    }
-
-    function canUsePostMessage() {
-        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
-        // where `global.postMessage` means something completely different and can't be used for this purpose.
-        if (global.postMessage && !global.importScripts) {
-            var postMessageIsAsynchronous = true;
-            var oldOnMessage = global.onmessage;
-            global.onmessage = function () {
-                postMessageIsAsynchronous = false;
-            };
-            global.postMessage("", "*");
-            global.onmessage = oldOnMessage;
-            return postMessageIsAsynchronous;
-        }
-    }
-
-    function installPostMessageImplementation() {
-        // Installs an event handler on `global` for the `message` event: see
-        // * https://developer.mozilla.org/en/DOM/window.postMessage
-        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
-
-        var messagePrefix = "setImmediate$" + Math.random() + "$";
-        var onGlobalMessage = function onGlobalMessage(event) {
-            if (event.source === global && typeof event.data === "string" && event.data.indexOf(messagePrefix) === 0) {
-                runIfPresent(+event.data.slice(messagePrefix.length));
-            }
-        };
-
-        if (global.addEventListener) {
-            global.addEventListener("message", onGlobalMessage, false);
-        } else {
-            global.attachEvent("onmessage", onGlobalMessage);
-        }
-
-        registerImmediate = function registerImmediate(handle) {
-            global.postMessage(messagePrefix + handle, "*");
-        };
-    }
-
-    function installMessageChannelImplementation() {
-        var channel = new MessageChannel();
-        channel.port1.onmessage = function (event) {
-            var handle = event.data;
-            runIfPresent(handle);
-        };
-
-        registerImmediate = function registerImmediate(handle) {
-            channel.port2.postMessage(handle);
-        };
-    }
-
-    function installReadyStateChangeImplementation() {
-        var html = doc.documentElement;
-        registerImmediate = function registerImmediate(handle) {
-            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
-            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
-            var script = doc.createElement("script");
-            script.onreadystatechange = function () {
-                runIfPresent(handle);
-                script.onreadystatechange = null;
-                html.removeChild(script);
-                script = null;
-            };
-            html.appendChild(script);
-        };
-    }
-
-    function installSetTimeoutImplementation() {
-        registerImmediate = function registerImmediate(handle) {
-            setTimeout(runIfPresent, 0, handle);
-        };
-    }
-
-    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
-    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
-    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
-
-    // Don't get fooled by e.g. browserify environments.
-    if ({}.toString.call(global.process) === "[object process]") {
-        // For Node.js before 0.9
-        installNextTickImplementation();
-    } else if (canUsePostMessage()) {
-        // For non-IE10 modern browsers
-        installPostMessageImplementation();
-    } else if (global.MessageChannel) {
-        // For web workers, where supported
-        installMessageChannelImplementation();
-    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
-        // For IE 6–8
-        installReadyStateChangeImplementation();
-    } else {
-        // For older browsers
-        installSetTimeoutImplementation();
-    }
-
-    attachTo.setImmediate = setImmediate;
-    attachTo.clearImmediate = clearImmediate;
-})(typeof self === "undefined" ? typeof global === "undefined" ? undefined : global : self);
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(8)))
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout() {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-})();
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch (e) {
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch (e) {
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e) {
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e) {
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while (len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) {
-    return [];
-};
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () {
-    return '/';
-};
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function () {
-    return 0;
 };
 
 /***/ })
