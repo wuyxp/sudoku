@@ -292,11 +292,11 @@ $('#hint').on('click', function () {
 
 // 答案
 $('#answer').on('click', function () {
-  if ($(this).html() === '查看') {
-    $(this).html('隐藏');
+  if ($(this).html() !== '答案') {
+    $(this).html('答案');
     render.answer(false);
   } else {
-    $(this).html('查看');
+    $(this).html('隐藏');
     render.answer(true);
   }
 });
