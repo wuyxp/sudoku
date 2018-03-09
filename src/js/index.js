@@ -12,7 +12,7 @@ const initCallback = state => {
 const successFun = (level) => {
   const tip = SUCCESS_TIP[parseInt($('#jumpList').val()) % (SUCCESS_TIP.length) ];
   $('#describe').html(tip);
-  let resultLevel = (level + 1 > MAX_LEVEL ) ? MAX_LEVEL : level + 1;
+  let resultLevel = (parseInt(level) + 1 > MAX_LEVEL ) ? MAX_LEVEL : parseInt(level) + 1;
   $('#jumpList').val(resultLevel);
 };
 const errorFun = () => {

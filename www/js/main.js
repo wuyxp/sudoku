@@ -238,7 +238,7 @@ var initCallback = function initCallback(state) {
 var successFun = function successFun(level) {
   var tip = _config.SUCCESS_TIP[parseInt($('#jumpList').val()) % _config.SUCCESS_TIP.length];
   $('#describe').html(tip);
-  var resultLevel = level + 1 > _config.MAX_LEVEL ? _config.MAX_LEVEL : level + 1;
+  var resultLevel = parseInt(level) + 1 > _config.MAX_LEVEL ? _config.MAX_LEVEL : parseInt(level) + 1;
   $('#jumpList').val(resultLevel);
 };
 var errorFun = function errorFun() {
