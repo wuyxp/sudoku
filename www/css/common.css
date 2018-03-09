@@ -121,6 +121,9 @@ header {
 .pupop > div.bottom-row:last-child > span {
   border-bottom: 0px;
 }
+.answer {
+  display: none;
+}
 .matrix {
   box-sizing: border-box;
   border: 1px solid #888888;

@@ -250,6 +250,7 @@ var render = new _ui.Render({
   describe: $('#describe'),
   matrix: $('#matrix'),
   dashboard: $('#dashboard'),
+  answer: $('#answerBox'),
   successFun: successFun,
   errorFun: errorFun
 });
@@ -291,7 +292,13 @@ $('#hint').on('click', function () {
 
 // 答案
 $('#answer').on('click', function () {
-  render.answer();
+  if ($(this).html() === '查看') {
+    $(this).html('隐藏');
+    render.answer(false);
+  } else {
+    $(this).html('查看');
+    render.answer(true);
+  }
 });
 
 /***/ }),
@@ -331,14 +338,17 @@ var Render = function () {
     var initCallback = config.initCallback,
         describe = config.describe,
         matrix = config.matrix,
+        answer = config.answer,
         dashboard = config.dashboard,
         successFun = config.successFun,
         errorFun = config.errorFun;
+
 
     this.matrixDom = matrix;
     this.targetDom;
     this.initCallback = initCallback;
     this.describeDom = describe;
+    this.answerDom = answer;
     this.dashboard = dashboard;
     this.emptyArr = []; // 初始化差的空白数据
     this.cacheDom = []; // 检索到错误dom的缓存
@@ -376,15 +386,25 @@ var Render = function () {
       var colClass = ['left-col', 'middle-col', 'right-col'];
       var rowClass = ['top-row', 'middle-row', 'bottom-row'];
       this.matrixDom.html('');
+      this.answerDom.html('');
       this.spotMatrix.forEach(function (row, rowIndex) {
-        var rowBox = $('<div>');
-        rowBox.addClass(rowClass[rowIndex % _config.BASE]);
+        var matrixRowBox = $('<div>');
+        var answerRowBox = $('<div>');
+        matrixRowBox.add(answerRowBox).addClass(rowClass[rowIndex % _config.BASE]);
         row.forEach(function (col, colIndex) {
-          var colBox = $('<span>').addClass(colClass[colIndex % _config.BASE]).addClass(col === 0 ? 'empty hide-font' : 'default').data({ row: rowIndex, col: colIndex }).html(col);
-          rowBox.append(colBox);
+          var matrixColBox = $('<span>');
+          var answerColBox = $('<span>');
+          matrixColBox.add(answerColBox).addClass(colClass[colIndex % _config.BASE]).data({ row: rowIndex, col: colIndex }).addClass(col === 0 ? 'empty hide-font' : 'default').html(col);
+          if (col === 0) {
+            answerColBox.html(_this.matrix[rowIndex][colIndex]);
+          }
+          matrixRowBox.append(matrixColBox);
+          answerRowBox.append(answerColBox);
         });
-        _this.matrixDom.append(rowBox);
+        _this.matrixDom.append(matrixRowBox);
+        _this.answerDom.append(answerRowBox);
       });
+      this.answerDom.find('.empty').removeClass('hide-font');
     }
 
     // 渲染弹出层
@@ -533,7 +553,17 @@ var Render = function () {
 
   }, {
     key: 'answer',
-    value: function answer() {}
+    value: function answer(flag) {
+      if (flag) {
+        this.describeDom.hide();
+        this.matrixDom.hide();
+        this.answerDom.show();
+      } else {
+        this.describeDom.show();
+        this.matrixDom.show();
+        this.answerDom.hide();
+      }
+    }
 
     // 隐藏弹出层
 

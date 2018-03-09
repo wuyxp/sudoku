@@ -7,11 +7,21 @@ import { checkMatrix, getRandomArr} from './toolkit';
 
 export class Render {
   constructor(config = {}){
-    const {initCallback, describe, matrix, dashboard, successFun, errorFun} = config;
+    const {
+      initCallback, 
+      describe, 
+      matrix, 
+      answer, 
+      dashboard, 
+      successFun, 
+      errorFun
+    } = config;
+
     this.matrixDom = matrix;
     this.targetDom;
     this.initCallback = initCallback;
     this.describeDom = describe;
+    this.answerDom = answer;
     this.dashboard = dashboard;
     this.emptyArr = []; // 初始化差的空白数据
     this.cacheDom = []; // 检索到错误dom的缓存
@@ -40,19 +50,28 @@ export class Render {
     const colClass = ['left-col','middle-col','right-col'];
     const rowClass = ['top-row','middle-row','bottom-row'];
     this.matrixDom.html(''); 
+    this.answerDom.html('');
     this.spotMatrix.forEach((row, rowIndex) => {
-      let rowBox = $('<div>');
-      rowBox.addClass(rowClass[rowIndex % BASE]);
+      let matrixRowBox = $('<div>');
+      let answerRowBox = $('<div>');
+      matrixRowBox.add(answerRowBox).addClass(rowClass[rowIndex % BASE]);
       row.forEach((col, colIndex) => {
-        let colBox = $('<span>')
-          .addClass(colClass[colIndex % BASE])
-          .addClass(col === 0 ? 'empty hide-font' : 'default')
+        let matrixColBox = $('<span>');
+        let answerColBox = $('<span>');
+          matrixColBox.add(answerColBox).addClass(colClass[colIndex % BASE])
           .data({row:rowIndex, col:colIndex})
+          .addClass(col === 0 ? 'empty hide-font' : 'default')
           .html(col);
-        rowBox.append(colBox);
+          if(col === 0 ){
+            answerColBox.html(this.matrix[rowIndex][colIndex]);
+          }
+          matrixRowBox.append(matrixColBox);
+          answerRowBox.append(answerColBox);
       });
-      this.matrixDom.append(rowBox);
+      this.matrixDom.append(matrixRowBox);
+      this.answerDom.append(answerRowBox);
     })
+    this.answerDom.find('.empty').removeClass('hide-font');
   }
 
   // 渲染弹出层
@@ -164,8 +183,16 @@ export class Render {
   }
 
   // 查看答案
-  answer(){
-
+  answer(flag){
+    if(flag){
+      this.describeDom.hide();
+      this.matrixDom.hide();
+      this.answerDom.show();
+    }else{
+      this.describeDom.show();
+      this.matrixDom.show();
+      this.answerDom.hide();
+    }
   }
 
   // 隐藏弹出层

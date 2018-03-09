@@ -24,6 +24,7 @@ const render = new Render({
   describe: $('#describe'),
   matrix: $('#matrix'),
   dashboard: $('#dashboard'),
+  answer:$('#answerBox'),
   successFun,
   errorFun 
 });
@@ -64,7 +65,14 @@ $('#hint').on('click',() => {
 });
 
 // 答案
-$('#answer').on('click',() => {
-  render.answer()
+$('#answer').on('click',function(){
+  if($(this).html() === '查看'){
+    $(this).html('隐藏');
+    render.answer(false);
+  }else{
+    $(this).html('查看');
+    render.answer(true); 
+  }
+  
 });
 
