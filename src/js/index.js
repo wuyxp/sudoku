@@ -24,12 +24,44 @@ const render = new Render({
   successFun,
   errorFun 
 });
-render.initCheck($('#check'));
-render.initReset($('#reset'));
-render.initClear($('#clear'));
-render.initRebuild($('#rebuild'));
 
+// 检查
+$('#check').on('click',() => {
+  render.check();
+});
+
+// 重置
+$('#reset').on('click',() => {
+  render.reset()
+});
+
+// 清理
+$('#clear').on('click',() => {
+  render.clear()
+});
+
+// 重建
+$('#reBuild').on('click',() => {
+  render.reBuild();
+});
+
+// 选关
+$('#jumpList').on('change',function(){
+  render.setLevel($(this).val()); 
+});
+
+// 跳关
 $('#jump').on('click',() => {
-  const level = $('#jumpList').val();
-  render.setLevel(level);
-})
+  render.jump();
+});
+
+// 提示
+$('#hint').on('click',() => {
+  render.hint();
+});
+
+// 答案
+$('#answer').on('click',() => {
+  render.answer()
+});
+

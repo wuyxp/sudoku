@@ -16,7 +16,7 @@ export class Render {
     this.container = container;
     this.dashboard = dashboard;
     this.emptyNum = 0; // 初始化差的空白数据
-    this.init(initCallback, container, dashboard);
+    this.init();
     this.cacheDom = []; // 检索到错误dom的缓存
     this.level = DEFAULT_LEVEL;
     this.successFun = successFun;
@@ -78,7 +78,6 @@ export class Render {
   //设置关卡
   setLevel(level){
     this.level = level;
-    this.reBuildMatrix();
   }
 
   // 展示弹出层
@@ -110,47 +109,51 @@ export class Render {
     }));
     return !this.cacheDom.length;
   }
-  // 绑定检查
-  initCheck(checkDom){
-    this.checkDom = checkDom;
-    this.checkDom.on('click', () => {
-      this.checkMatrixDom();
+  // 检查
+  check(){
+    this.checkMatrixDom();
+  }
+
+  // 重置
+  reset(){
+    this.spotMatrix = JSON.parse(JSON.stringify(this._spotMatrix));
+    this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
+    this.renderMatrixDom(this.container);
+    this.initBindMatrixDom();
+  }
+
+  // 清除
+  clear(clearDom){
+    this.cacheDom.forEach(col => {
+      this.emptyNum++;
+      col.html(0).removeClass('error-mark').addClass('hide-font');
     })
   }
-
-  // 绑定重置
-  initReset(resetDom){
-    this.resetDom = resetDom;
-    this.resetDom.on('click', () => {
-      this.spotMatrix = JSON.parse(JSON.stringify(this._spotMatrix));
-      this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
-      this.renderMatrixDom(this.container);
-      this.initBindMatrixDom();
-    }) 
-  }
-
-  // 绑定清除
-  initClear(clearDom){
-    this.clearDom = clearDom;
-    this.clearDom.on('click', () => {
-      this.cacheDom.forEach(col => {
-        this.emptyNum++;
-        col.html(0).removeClass('error-mark').addClass('hide-font');
-      })
-    }) 
-  }
+  
   reBuildMatrix(){
     this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
     this.dashboard.html('');
     this.init();
   }
 
-  // 绑定重建
-  initRebuild(reBuild){
-    this.reBuild = reBuild;
-    this.reBuild.on('click',() => {
-      this.reBuildMatrix();
-    })
+  // 重建
+  reBuild(reBuild){
+    this.reBuildMatrix();
+  }
+
+  // 跳关
+  jump(){
+    this.reBuildMatrix();
+  }
+
+  // 提示
+  hint(){
+
+  }
+
+  // 查看答案
+  answer(){
+
   }
 
   // 隐藏弹出层

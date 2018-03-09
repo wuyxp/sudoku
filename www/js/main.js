@@ -274,14 +274,45 @@ var render = new _ui.Render({
   successFun: successFun,
   errorFun: errorFun
 });
-render.initCheck($('#check'));
-render.initReset($('#reset'));
-render.initClear($('#clear'));
-render.initRebuild($('#rebuild'));
 
+// 检查
+$('#check').on('click', function () {
+  render.check();
+});
+
+// 重置
+$('#reset').on('click', function () {
+  render.reset();
+});
+
+// 清理
+$('#clear').on('click', function () {
+  render.clear();
+});
+
+// 重建
+$('#reBuild').on('click', function () {
+  render.reBuild();
+});
+
+// 选关
+$('#jumpList').on('change', function () {
+  render.setLevel($(this).val());
+});
+
+// 跳关
 $('#jump').on('click', function () {
-  var level = $('#jumpList').val();
-  render.setLevel(level);
+  render.jump();
+});
+
+// 提示
+$('#hint').on('click', function () {
+  render.hint();
+});
+
+// 答案
+$('#answer').on('click', function () {
+  render.answer();
 });
 
 /***/ }),
@@ -310,7 +341,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 // 将生成的矩阵展示在页面上
 
-var Render = exports.Render = function () {
+var Render = function () {
   function Render() {
     var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -329,7 +360,7 @@ var Render = exports.Render = function () {
     this.container = container;
     this.dashboard = dashboard;
     this.emptyNum = 0; // 初始化差的空白数据
-    this.init(initCallback, container, dashboard);
+    this.init();
     this.cacheDom = []; // 检索到错误dom的缓存
     this.level = _config.DEFAULT_LEVEL;
     this.successFun = successFun;
@@ -391,7 +422,6 @@ var Render = exports.Render = function () {
     key: 'setLevel',
     value: function setLevel(level) {
       this.level = level;
-      this.reBuildMatrix();
     }
 
     // 展示弹出层
@@ -443,48 +473,35 @@ var Render = exports.Render = function () {
       });
       return !this.cacheDom.length;
     }
-    // 绑定检查
+    // 检查
 
   }, {
-    key: 'initCheck',
-    value: function initCheck(checkDom) {
+    key: 'check',
+    value: function check() {
+      this.checkMatrixDom();
+    }
+
+    // 重置
+
+  }, {
+    key: 'reset',
+    value: function reset() {
+      this.spotMatrix = JSON.parse(JSON.stringify(this._spotMatrix));
+      this.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
+      this.renderMatrixDom(this.container);
+      this.initBindMatrixDom();
+    }
+
+    // 清除
+
+  }, {
+    key: 'clear',
+    value: function clear(clearDom) {
       var _this3 = this;
 
-      this.checkDom = checkDom;
-      this.checkDom.on('click', function () {
-        _this3.checkMatrixDom();
-      });
-    }
-
-    // 绑定重置
-
-  }, {
-    key: 'initReset',
-    value: function initReset(resetDom) {
-      var _this4 = this;
-
-      this.resetDom = resetDom;
-      this.resetDom.on('click', function () {
-        _this4.spotMatrix = JSON.parse(JSON.stringify(_this4._spotMatrix));
-        _this4.container.html('<h2 class="describe" id="describe">正在倒计时</h2>');
-        _this4.renderMatrixDom(_this4.container);
-        _this4.initBindMatrixDom();
-      });
-    }
-
-    // 绑定清除
-
-  }, {
-    key: 'initClear',
-    value: function initClear(clearDom) {
-      var _this5 = this;
-
-      this.clearDom = clearDom;
-      this.clearDom.on('click', function () {
-        _this5.cacheDom.forEach(function (col) {
-          _this5.emptyNum++;
-          col.html(0).removeClass('error-mark').addClass('hide-font');
-        });
+      this.cacheDom.forEach(function (col) {
+        _this3.emptyNum++;
+        col.html(0).removeClass('error-mark').addClass('hide-font');
       });
     }
   }, {
@@ -495,18 +512,33 @@ var Render = exports.Render = function () {
       this.init();
     }
 
-    // 绑定重建
+    // 重建
 
   }, {
-    key: 'initRebuild',
-    value: function initRebuild(reBuild) {
-      var _this6 = this;
-
-      this.reBuild = reBuild;
-      this.reBuild.on('click', function () {
-        _this6.reBuildMatrix();
-      });
+    key: 'reBuild',
+    value: function reBuild(_reBuild) {
+      this.reBuildMatrix();
     }
+
+    // 跳关
+
+  }, {
+    key: 'jump',
+    value: function jump() {
+      this.reBuildMatrix();
+    }
+
+    // 提示
+
+  }, {
+    key: 'hint',
+    value: function hint() {}
+
+    // 查看答案
+
+  }, {
+    key: 'answer',
+    value: function answer() {}
 
     // 隐藏弹出层
 
@@ -521,15 +553,15 @@ var Render = exports.Render = function () {
   }, {
     key: 'checkOver',
     value: function checkOver() {
-      var _this7 = this;
+      var _this4 = this;
 
       this.emptyNum = this.setEmptyNum();
       if (this.emptyNum === 0) {
         if (this.checkMatrixDom()) {
           this.successFun && this.successFun();
           (0, _timers.setTimeout)(function () {
-            _this7.level++;
-            _this7.reBuildMatrix();
+            _this4.level++;
+            _this4.reBuildMatrix();
           }, 200);
         } else {
           this.errorFun && this.errorFun();
@@ -581,7 +613,7 @@ var Render = exports.Render = function () {
   }, {
     key: 'initBindMatrixDom',
     value: function initBindMatrixDom() {
-      var _this8 = this;
+      var _this5 = this;
 
       this.matrixDom.on('click', '.empty', function (e) {
         var colDom = $(e.target);
@@ -590,10 +622,10 @@ var Render = exports.Render = function () {
             row = _colDom$data.row,
             col = _colDom$data.col;
 
-        _this8.targetDom = {
+        _this5.targetDom = {
           colDom: colDom, row: row, col: col
         };
-        _this8.showPupop(colDom);
+        _this5.showPupop(colDom);
       });
     }
 
@@ -602,22 +634,22 @@ var Render = exports.Render = function () {
   }, {
     key: 'initBindPupopDom',
     value: function initBindPupopDom() {
-      var _this9 = this;
+      var _this6 = this;
 
       this.pupopDom.on('click', 'span', function (e) {
         var colDom = $(e.target);
         var text = colDom.text();
-        _this9.targetDom.colDom.removeClass('error-mark');
+        _this6.targetDom.colDom.removeClass('error-mark');
         if (text !== 'm') {
-          _this9.setColValue(/\d/.test(text) ? text : 0);
+          _this6.setColValue(/\d/.test(text) ? text : 0);
         } else {
-          _this9.setColClass(colDom.attr('className'));
+          _this6.setColClass(colDom.attr('className'));
         }
-        _this9.hidePupop();
+        _this6.hidePupop();
       });
       $('body').on('click', function (e) {
         if ($(e.target).closest('#matrix').length === 0) {
-          _this9.hidePupop();
+          _this6.hidePupop();
         }
       });
     }
@@ -634,6 +666,8 @@ var Render = exports.Render = function () {
 
   return Render;
 }();
+
+exports.Render = Render;
 
 /***/ }),
 /* 5 */

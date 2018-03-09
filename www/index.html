@@ -13,16 +13,23 @@
       数独游戏
     </header>
     <section class="setting">
-      <select name="" id="jumpList">
-        <option value="1">第一关</option>
-        <option value="2">第二关</option>
-        <option value="3">第三关</option>
-        <option value="4">第四关</option>
-        <option value="5">第五关</option>
-      </select>
-      <input type="button" value="跳关" id='jump' >
-      <div id="overTip"></div>
+      <div>
+        <select name="" id="jumpList">
+          <option value="1">第一关</option>
+          <option value="2">第二关</option>
+          <option value="3">第三关</option>
+          <option value="4">第四关</option>
+          <option value="5">第五关</option>
+          <option value="6">第六关</option>
+          <option value="7">第七关</option>
+          <option value="8">第八关</option>
+        </select>
+      </div>
+      <div id='jump'>跳关</div>
+      <div id='hint'>提示</div>
+      <div id='answer'>答案</div>
     </section>
+    <div id="overTip"></div>
     <section class="container" id="container">
       <h2 class="describe" id="describe">正在倒计时</h2>
     </section>
@@ -30,7 +37,7 @@
       <button id="check">检查</button>
       <button id="reset">重置</button>
       <button id="clear">清理</button>
-      <button id="rebuild">重建</button>
+      <button id="reBuild">重建</button>
     </footer>
     <div class="pupop hide" id="dashboard">
     </div>
